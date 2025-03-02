@@ -1,7 +1,7 @@
 export default function Home() {
   return (
     <div>
-      app
+      app1
     </div>
   );
 }
