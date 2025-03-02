@@ -21,6 +21,7 @@ const Login = () => {
       console.log("Login successful:", response);
 
       localStorage.setItem("token", response.token);
+      localStorage.setItem("shortId", response.shortId); // Зберігаємо shortId в localStorage
 
       const token = response.token;
       const shortId = response.shortId; 
