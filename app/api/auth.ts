@@ -25,6 +25,7 @@ export const getUserById = async (token: string, shortId: string) => {
             headers: { "x-access-token": token },
             params: { shortId }
         });
+        console.log('Server response:', response.data);
         return response.data;
     } catch (error) {
         console.error("Error fetching user:", error);
