@@ -9,11 +9,9 @@ import { useModalStore } from '@/app/store/use-modal-store';
 import { useAuthStore } from '@/app/store/use-auth-store';
 import { colorPurple } from "@/utils/utils";
 import { UserInfoModal } from "./user-info-modal";
-interface HeaderProps {
-  toggleSidebar: () => void;
-}
+import { useSidebarStore } from "@/app/store/use-sidebar-store";
 
-const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
+const Header = () => {
   const { isModalOpen, toggleModal } = useModalStore();
   const { user } = useAuthStore();
   const userButtonRef = useRef<HTMLButtonElement>(null);
@@ -24,10 +22,16 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
     toggleModal();
   };
 
+  const { toggleSidebar } = useSidebarStore();
+
+  const handleToggleSidebar = () => {
+    toggleSidebar();
+  };
+
   return (
     <header>
       <section className="flex justify-between items-center p-3.5 border-b-4 border-gray-300">
-        <div onClick={toggleSidebar} className="flex items-center space-x-2 cursor-pointer">
+        <div onClick={handleToggleSidebar} className="flex items-center space-x-2 cursor-pointer">
           <IconLogo color={colorPurple} />
         </div>
         <div className="flex items-center space-x-4">
@@ -43,7 +47,6 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
             {isModalOpen && (
               <UserInfoModal
                 isOpen={isModalOpen}
-                onClose={toggleModal}
                 buttonRef={userButtonRef}
               />
             )}

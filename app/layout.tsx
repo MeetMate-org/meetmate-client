@@ -1,13 +1,11 @@
-import type { Metadata } from "next";
+"use client";
+
 import { Montserrat } from "next/font/google";
 import "./globals.css";
+import { Sidebar } from "./ui/components/Sidebar";
+import { useSidebarStore } from "./store/use-sidebar-store";
 
 const montserrat = Montserrat({ subsets: ["latin"], weight: "400" });
-
-export const metadata: Metadata = {
-  title: "MeetMate",
-  description: "Your meeting management solution",
-};
 
 export default function RootLayout({
   children,
@@ -17,7 +15,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={montserrat.className}>
-        {children}
+        <Sidebar isOpen={true}>
+          {children}
+        </Sidebar>
       </body>
     </html>
   );

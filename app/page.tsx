@@ -5,12 +5,11 @@ import { getUserById } from "./api/auth";
 import { useAuthStore } from "./store/use-auth-store";
 
 import { GreetingsBox } from "./ui/components/greetings-box";
-import { Sidebar } from "./ui/components/Sidebar";
 import Header from "./ui/components/header";
 import { Tabs } from "./ui/components/tabs";
 
 export default function Home() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const router = useRouter();
   const { setUser } = useAuthStore();
 
@@ -50,15 +49,10 @@ export default function Home() {
     initAuth();
   }, [initAuth]);
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
-
   return (
     <div className="flex h-screen bg-gray-100">
-      <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
       <div className="flex-1 flex flex-col overflow-hidden">
-        <Header toggleSidebar={toggleSidebar} />
+        <Header />
 
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
           <GreetingsBox />

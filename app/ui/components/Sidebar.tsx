@@ -8,33 +8,34 @@ import { IconCalender } from "../svg/icon-calendar";
 import { IconLetter } from "../svg/icon-letter";
 import { IconUserMeeting } from "../svg/icon-user-meeting";
 import { colorPurple } from "@/utils/utils";
+import { useSidebarStore } from "@/app/store/use-sidebar-store";
 
 interface SidebarProps {
   isOpen: boolean;
-  toggleSidebar: () => void;
+  children?: React.ReactNode;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ children }) => {
   const pathname = usePathname();
 
-  // Функція повертає класи для пункту меню залежно від активності
   const linkClasses = (href: string) =>
     `flex items-center space-x-2 px-3 py-2 rounded-md font-semibold ${
       pathname === href
         ? "bg-white text-colorPurple"
-        : "text-white hover:bg-colorPurple"
+        : "text-white hover:bg-white hover:text-colorPurple"
     }`;
 
-  // Функція для визначення кольору іконки
   const iconColor = (href: string) =>
     pathname === href ? colorPurple : "#ffffff";
+
+  const { toggleSidebar, isSidebarOpen } = useSidebarStore();
 
   return (
     <>
       {/* Оверлей */}
       <div
         className={`fixed inset-0 bg-black bg-opacity-30 z-40 transition-opacity duration-300 ${
-          isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+          isSidebarOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
         onClick={toggleSidebar}
       ></div>
@@ -42,7 +43,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
       {/* Сайдбар */}
       <div
         className={`fixed top-0 left-0 h-screen w-64 bg-colorPurple text-white z-50 transform transition-transform duration-300 ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         <div className="p-4 h-full flex flex-col">
@@ -73,7 +74,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
           <div>
             <p className="mb-3 font-bold">Actions</p>
             <button className="w-full border border-white text-white rounded-md px-3 py-2 mb-2 hover:bg-colorPurple">
-              + Schedule new meeting
+              + Meeting
             </button>
             <button className="w-full border border-white text-white rounded-md px-3 py-2 hover:bg-colorPurple">
               + Create Team
@@ -81,6 +82,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
           </div>
         </div>
       </div>
+
+      {children}
     </>
   );
 };

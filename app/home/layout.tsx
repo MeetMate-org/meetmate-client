@@ -4,7 +4,6 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { getUserById } from "../api/auth";
 import { useAuthStore } from "../store/use-auth-store";
-import { Sidebar } from "../ui/components/sidebar";
 import Header from "../ui/components/header";
 
 export default function HomeLayout({
@@ -48,16 +47,11 @@ export default function HomeLayout({
     initAuth();
   }, [initAuth]);
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
-
   return (
     <div className="flex h-screen bg-gray-100">
-      <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
 
       <div className="flex-1 flex flex-col overflow-hidden">
-        <Header toggleSidebar={toggleSidebar} />
+        <Header />
 
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
           {children}

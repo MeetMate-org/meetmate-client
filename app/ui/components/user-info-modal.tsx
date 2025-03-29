@@ -2,16 +2,17 @@
 import React, { useEffect, useRef } from "react";
 import { IconUserCircle } from "../svg/icon-user-circle";
 import { useAuthStore } from "@/app/store/use-auth-store";
+import { useModalStore } from "@/app/store/use-modal-store";
 
 interface UserInfoModalProps {
   isOpen: boolean;
-  onClose: () => void;
   buttonRef: React.RefObject<HTMLButtonElement | null>;
 }
 
-export const UserInfoModal: React.FC<UserInfoModalProps> = ({ isOpen, onClose, buttonRef }) => {
+export const UserInfoModal: React.FC<UserInfoModalProps> = ({ isOpen, buttonRef }) => {
   const { user } = useAuthStore();
   const modalRef = useRef<HTMLDivElement>(null);
+  const { toggleModal } = useModalStore();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -21,13 +22,13 @@ export const UserInfoModal: React.FC<UserInfoModalProps> = ({ isOpen, onClose, b
         buttonRef.current && 
         !buttonRef.current.contains(event.target as Node)
       ) {
-        onClose();
+        toggleModal();
       }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [onClose, buttonRef]);
+  }, [toggleModal, buttonRef]);
 
   if (!isOpen || !user) {
     return null;
@@ -71,7 +72,7 @@ export const UserInfoModal: React.FC<UserInfoModalProps> = ({ isOpen, onClose, b
           </div>
           
           <button
-            onClick={onClose}
+            onClick={toggleModal}
             className="w-full px-3 py-2 text-sm bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors"
           >
             Close
