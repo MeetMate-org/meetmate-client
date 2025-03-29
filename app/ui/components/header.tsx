@@ -22,13 +22,12 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
     console.log('User clicked, current modal state:', isModalOpen);
     console.log('Current user:', user);
     toggleModal();
-    console.log('Modal state after toggle:', !isModalOpen);
   };
 
   return (
     <header>
       <section className="flex justify-between items-center p-3.5 border-b-4 border-gray-300">
-        <div className="flex items-center space-x-2">
+        <div onClick={toggleSidebar} className="flex items-center space-x-2 cursor-pointer">
           <IconLogo color={colorPurple} />
         </div>
         <div className="flex items-center space-x-4">
@@ -49,7 +48,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
               />
             )}
           </div>
-          <button onClick={toggleSidebar} className="focus:outline-none">
+          <button onClick={toggleSidebar} className="md:hidden focus:outline-none">
             <IconBurger />
           </button>
         </div>

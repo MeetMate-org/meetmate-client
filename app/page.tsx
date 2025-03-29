@@ -5,7 +5,7 @@ import { getUserById } from "./api/auth";
 import { useAuthStore } from "./store/use-auth-store";
 
 import { GreetingsBox } from "./ui/components/greetings-box";
-import { Sidebar } from "./ui/components/sidebar";
+import { Sidebar } from "./ui/components/Sidebar";
 import Header from "./ui/components/header";
 import { Tabs } from "./ui/components/tabs";
 
