@@ -2,11 +2,11 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { IconLogo } from "../svg/IconLogo";
-import { IconHome } from "../svg/IconHome";
-import { IconCalender } from "../svg/IconCalendar";
-import { IconLetter } from "../svg/IconLetter";
-import { IconUserMeeting } from "../svg/IconUserMeeting";
+import { IconLogo } from "../svg/icon-logo";
+import { IconHome } from "../svg/icon-home";
+import { IconCalender } from "../svg/icon-calendar";
+import { IconLetter } from "../svg/icon-letter";
+import { IconUserMeeting } from "../svg/icon-user-meeting";
 import { colorPurple } from "@/utils/utils";
 
 interface SidebarProps {

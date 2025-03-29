@@ -3,39 +3,21 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { getUserById, login } from "@/app/api/auth";
-import { useRouter } from "next/navigation";
+import { useAuth } from "@/app/hooks/use-auth";
 
 const Login = () => {
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const router = useRouter();
+  const [localError, setLocalError] = useState("");
+  const { handleLogin } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
+    setLocalError("");
 
-    try {
-      const response = await login(identifier, password);
-      console.log("Login successful:", response);
-
-      localStorage.setItem("token", response.token);
-      localStorage.setItem("shortId", response.shortId); 
-
-      const token = response.token;
-      const shortId = response.shortId; 
-
-      const user = await getUserById(token, shortId);
-
-      if (user) {
-        router.push("/");
-      } else {
-        setError("User not found. Please try again.");
-      }
-    } catch (error) {
-      setError("Invalid credentials. Please try again.");
-      console.error("Login failed:", error);
+    const result = await handleLogin(identifier, password);
+    if (!result.success && result.error) {
+      setLocalError(result.error);
     }
   };
 
@@ -78,7 +60,7 @@ const Login = () => {
               </div>
             </div>
           </div>
-          {error && <p className="text-red-500 text-center">{error}</p>}
+          {localError && <p className="text-red-500 text-center">{localError}</p>}
           <div className="mt-2 flex flex-col gap-2">
             <button type="submit" className="w-full bg-[#071c37] py-2 rounded-md text-white shadow-xl">Log In</button>
             <button type="button" className="w-full flex justify-center items-center gap-x-2 bg-[#d7d6ce] bg-opacity-60 py-2 rounded-md text-white shadow-xl">
