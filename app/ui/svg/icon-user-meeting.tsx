@@ -8,7 +8,7 @@ interface IconUserMeetingProps {
 
 export const IconUserMeeting: React.FC<IconUserMeetingProps> = ({
   color = "#1C274C",
-  strokeColor = "#5E00FF", 
+  strokeColor = "#21334C", 
   strokeWidth = 1.5 
 }) => {
   return (

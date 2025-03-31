@@ -1,6 +1,7 @@
 export const colorPurple = "#5E00FF";
 export const colorDarkBlue = "#071C37";
 export const colorGray = "#D9D9D9";
+export const colorPrimary = "#21334C";
 
 interface Event {
   id: number;

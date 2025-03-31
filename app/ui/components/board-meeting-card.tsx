@@ -29,7 +29,7 @@ export const BoardMeetingCard: React.FC<BoardMeetingCardProps> = ({ meeting }) =
   };
   
   return (
-    <div className="bg-white rounded-xl shadow-sm border-2 border-purple-500 overflow-hidden">
+    <div className="bg-white rounded-xl shadow-sm border-2 border-colorPrimary overflow-hidden">
       <div className="p-4">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">

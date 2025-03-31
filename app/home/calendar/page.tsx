@@ -1,7 +1,5 @@
 "use client";
 
-import { Tabs } from "@/app/ui/components/tabs";
-import { GreetingsBox } from "@/app/ui/components/greetings-box";
 import { CalendarMeetingCard } from "@/app/ui/components/calendar-meeting-card";
 import WeekCalendar from "@/app/ui/components/week-calendar";
 import { useMeetingsStore } from "@/app/store/use-meetings-store";
@@ -11,8 +9,6 @@ export default function CalendarRoute() {
 
   return (
     <div className="container mx-auto px-6 py-8">
-      <GreetingsBox />
-      <Tabs />
       <div className="flex flex-col">
         <div className="md:hidden space-y-4">
           {!meetings || meetings.length === 0 ? (

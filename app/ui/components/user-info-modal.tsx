@@ -73,7 +73,7 @@ export const UserInfoModal: React.FC<UserInfoModalProps> = ({ isOpen, buttonRef 
           
           <button
             onClick={toggleModal}
-            className="w-full px-3 py-2 text-sm bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors"
+            className="w-full px-3 py-2 text-sm bg-colorPrimary text-white rounded hover:opacity-[.7] transition-colors"
           >
             Close
           </button>

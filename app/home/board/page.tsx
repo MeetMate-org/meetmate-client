@@ -2,16 +2,12 @@
 
 import { useMeetingsStore } from "@/app/store/use-meetings-store";
 import { BoardMeetingCard } from "@/app/ui/components/board-meeting-card";
-import { GreetingsBox } from "@/app/ui/components/greetings-box";
-import { Tabs } from "@/app/ui/components/tabs";
 
 export default function BoardRoute() {
   const meetings = useMeetingsStore((state) => state.meetings);
 
   return (
-    <div className="container mx-auto px-6 py-8">
-      <GreetingsBox />
-      <Tabs />
+    <>
       <div className="flex flex-col">
       <div className="space-y-4">
         {!meetings || meetings.length === 0 ? (
@@ -28,6 +24,6 @@ export default function BoardRoute() {
         )}
       </div>
     </div>
-    </div>
+    </>
   );
 } 
