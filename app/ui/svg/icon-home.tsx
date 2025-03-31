@@ -8,7 +8,7 @@ interface IconHomeProps {
 
 export const IconHome: React.FC<IconHomeProps> = ({ 
   color = "#5E1AF4", 
-  strokeColor = "#5E1AF4", 
+  strokeColor = "#21334C", 
   strokeWidth = 1.5 
 }) => {
   return (

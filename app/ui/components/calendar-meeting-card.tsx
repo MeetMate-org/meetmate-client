@@ -74,16 +74,16 @@ export const CalendarMeetingCard: React.FC<CalendarMeetingCardProps> = ({ meetin
       className="flex cursor-pointer rounded-2xl overflow-hidden shadow-sm mb-4 hover:shadow-md transition-shadow" 
       onClick={handleCardClick}
     >
-      <div className="w-24 bg-colorPurple p-3 flex flex-col justify-center items-center text-black">
-        <span className="text-sm font-medium">{day}</span>
-        <span className="text-2xl font-bold">{dayNumber}</span>
+      <div className="w-24 bg-colorPrimary p-3 flex flex-col justify-center items-center text-black">
+        <span className="text-sm font-medium md:text-black text-white">{day}</span>
+        <span className="text-2xl font-bold md:text-black text-white">{dayNumber}</span>
       </div>
       
       <div className="flex-1 bg-[#5E00FF80] p-4 ">
         <div className="flex justify-between items-start">
           <div className="text-black">
-            <h3 className="font-semibold text-lg">{meeting.name}</h3>
-            <p className="opacity-90">{time}</p>
+            <h3 className="font-semibold text-lg md:text-black text-white">{meeting.name}</h3>
+            <p className="opacity-90 md:text-black text-white">{time}</p>
           </div>
           {isExpanded && (
             <button 
