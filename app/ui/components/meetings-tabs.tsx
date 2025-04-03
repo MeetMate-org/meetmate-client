@@ -18,20 +18,20 @@ export const MeetingsTabs: React.FC<MeetingsTabsProps> = ({ children }) => {
       <div className="flex space-x-4 my-4 justify-center bg-colorPrimary py-2 rounded-lg md:bg-transparent">
         <button
           onClick={() => router.push("/meetings/host")}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
+          className={`flex items-center space-x-2 px-4 py-2 text-white rounded-lg transition-colors ${
             isHost
               ? "bg-black text-white hover:opacity-80"
-              : "bg-transparent text-gray-600"
+              : "bg-transparent text-white md:text-gray-600"
           }`}
         >
           <span>I'm hosting</span>
         </button>
         <button
           onClick={() => router.push("/meetings/attend")}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
+          className={`flex items-center space-x-2 px-4 py-2 text-white rounded-lg transition-colors ${
             isAttend
               ? "bg-black text-white hover:opacity-80"
-              : "bg-transparent text-gray-600"
+              : "bg-transparent text-white md:text-gray-600"
           }`}
         >
           <span>I'm attending</span>

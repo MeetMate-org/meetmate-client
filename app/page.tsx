@@ -34,7 +34,7 @@ export default function Home() {
           role: 'user'
         });
         // Перенаправляємо на board за замовчуванням
-        router.push("/home/board");
+        router.push("/board");
       } else {
         console.error('Invalid user data structure:', userData);
         router.push("/auth/login");
@@ -58,7 +58,13 @@ export default function Home() {
           <GreetingsBox />
 
           <div className="container mx-auto px-6 py-8">
-            <Tabs />
+            <Tabs>
+              {/* Your tab content goes here */}
+              <div className="tab-content">
+                <h2>Welcome to the Board</h2>
+                <p>This is your board where you can manage tasks and projects.</p>
+              </div>
+            </Tabs>
           </div>
         </main>
       </div>
