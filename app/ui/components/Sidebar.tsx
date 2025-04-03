@@ -47,12 +47,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ children }) => {
         }`}
       >
         <div className="p-4 h-full flex flex-col">
-          <div className="flex items-center mb-6">
+          <div className="flex items-center mb-6 w-full justify-center">
             <IconLogo color="#ffffff" />
           </div>
 
           <nav className="flex flex-col space-y-2 mb-8">
-            <span className="ml-2 font-bold text-lg">Main menu</span>
             <Link href="/" className={linkClasses("/home")}>
               <IconHome color={iconColor("/home")} />
               <span>Home</span>
@@ -65,18 +64,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ children }) => {
               <IconLetter color={iconColor("/voting")} />
               <span>Voting</span>
             </Link>
-            <Link href="/teams" className={linkClasses("/teams")}>
-              <IconUserMeeting color={iconColor("/teams")} />
-              <span>My teams</span>
-            </Link>
           </nav>
 
-          <div>
-            <p className="mb-3 font-bold">Actions</p>
-            <button className="w-full border border-white text-white rounded-md px-3 py-2 mb-2 hover:bg-colorPrimary">
-              + Meeting
-            </button>
-          </div>
+          <button className="w-full border border-white text-white rounded-md px-3 py-2 mb-2 hover:bg-colorPrimary">
+            + Meeting
+          </button>
         </div>
       </div>
 
