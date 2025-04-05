@@ -1,14 +1,19 @@
 "use client";
-import { useEffect, useState } from "react";
-import { getUserById } from "@/app/api/auth";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { getUserById } from "./api/auth";
+import { useAuthStore } from "./store/use-auth-store";
 
-const Home = () => {
-  const [username, setUsername] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+import { GreetingsBox } from "./ui/components/greetings-box";
+import Header from "./ui/components/header";
+import { Tabs } from "./ui/components/tabs";
+
+export default function Home() {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const router = useRouter();
+  const { setUser } = useAuthStore();
 
-  useEffect(() => {
+  const initAuth = useCallback(async () => {
     const token = localStorage.getItem("token");
     const shortId = localStorage.getItem("shortId");
 
@@ -17,35 +22,52 @@ const Home = () => {
       return;
     }
 
-    if (token && shortId) {
-      const fetchUser = async () => {
-        try {
-          const user = await getUserById(token, shortId);
-
-          if (user) {
-            setUsername(user.username); 
-          } else {
-            setError("User not found.");
-          }
-        } catch (error) {
-          console.error("Error fetching user:", error);
-          setError("Failed to load user data.");
-        }
-      };
-
-      fetchUser();
+    try {
+      const userData = await getUserById(token, shortId);
+      console.log('User data received:', userData);
+      
+      if (userData && userData.username) {
+        setUser({
+          id: shortId,
+          email: userData.username,
+          name: userData.username,
+          role: 'user'
+        });
+        // Перенаправляємо на board за замовчуванням
+        router.push("/home/board");
+      } else {
+        console.error('Invalid user data structure:', userData);
+        router.push("/auth/login");
+      }
+    } catch (error) {
+      console.error("Error loading user data:", error);
+      router.push("/auth/login");
     }
-  }, );
+  }, [router, setUser]);
+
+  useEffect(() => {
+    initAuth();
+  }, [initAuth]);
 
   return (
-    <div>
-      {error ? (
-        <p>{error}</p>
-      ) : (
-        <p>Hello, {username || "Guest"}!</p>
-      )}
+    <div className="flex h-screen bg-gray-100">
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <Header />
+
+        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
+          <GreetingsBox />
+
+          <div className="container mx-auto px-6 py-8">
+            <Tabs>
+              {/* Your tab content goes here */}
+              <div className="tab-content">
+                <h2>Welcome to the Home page</h2>
+                <p>Please choose the tab you want to view.</p>
+              </div>
+            </Tabs>
+          </div>
+        </main>
+      </div>
     </div>
   );
-};
-
-export default Home;
+}
