@@ -2,13 +2,19 @@ import React from "react";
 
 interface IconLogoProps {
   color?: string;
+  width?: number | string;
+  height?: number | string;
 }
 
-export const IconLogo: React.FC<IconLogoProps> = ({ color = "#5E00FF" }) => {
+export const IconLogo: React.FC<IconLogoProps> = ({
+  color = "#5E00FF",
+  width = "50",
+  height = "50",
+}) => {
   return (
     <svg
-      width="50"
-      height="50"
+      width={width}
+      height={height}
       viewBox="0 0 50 50"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
