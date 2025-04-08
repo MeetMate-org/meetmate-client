@@ -1,4 +1,5 @@
 "use client";
+
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { getUserById } from "./api/auth";
@@ -24,19 +25,19 @@ export default function Home() {
 
     try {
       const userData = await getUserById(token, shortId);
-      console.log('User data received:', userData);
-      
+      console.log("User data received:", userData);
+
       if (userData && userData.username) {
         setUser({
           id: shortId,
           email: userData.username,
           name: userData.username,
-          role: 'user'
+          role: "user",
         });
         // Перенаправляємо на board за замовчуванням
         router.push("/home/board");
       } else {
-        console.error('Invalid user data structure:', userData);
+        console.error("Invalid user data structure:", userData);
         router.push("/auth/login");
       }
     } catch (error) {

@@ -1,16 +1,16 @@
 "use client";
 
 import React from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { Widget } from "../svg/icon-widget";
 import { IconCalender } from "../svg/icon-calendar";
+import Link from "next/link";
 
 interface TabsProps {
   children: React.ReactNode;
 }
 
 export const Tabs: React.FC<TabsProps> = ({ children }) => {
-  const router = useRouter();
   const pathname = usePathname();
   const isBoard = pathname === "/home/board";
   const isCalendar = pathname === "/home/calendar";
@@ -18,8 +18,8 @@ export const Tabs: React.FC<TabsProps> = ({ children }) => {
   return (
     <>
       <div className="flex space-x-4 mb-6 justify-center">
-        <button
-          onClick={() => router.push("/home/board")}
+        <Link
+          href={"/home/board"}
           className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
             isBoard
               ? "bg-colorPrimary text-white"
@@ -27,10 +27,10 @@ export const Tabs: React.FC<TabsProps> = ({ children }) => {
           }`}
         >
           <Widget color={isBoard ? "white" : "#4B5563"} />
-          <span>Board</span>
-        </button>
-        <button
-          onClick={() => router.push("/home/calendar")}
+          Board
+        </Link>
+        <Link
+          href={"/home/calendar"}
           className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
             isCalendar
               ? "bg-colorPrimary text-white"
@@ -38,8 +38,8 @@ export const Tabs: React.FC<TabsProps> = ({ children }) => {
           }`}
         >
           <IconCalender color={isCalendar ? "white" : "#4B5563"} />
-          <span>Calendar</span>
-        </button>
+          Calendar
+        </Link>
       </div>
 
       {children}
@@ -47,4 +47,4 @@ export const Tabs: React.FC<TabsProps> = ({ children }) => {
   );
 };
 
-Tabs.displayName = "Tabs"; 
+Tabs.displayName = "Tabs";

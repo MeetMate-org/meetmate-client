@@ -7,9 +7,9 @@ interface IconUserMeetingProps {
 }
 
 export const IconUserMeeting: React.FC<IconUserMeetingProps> = ({
-  color = "#1C274C",
-  strokeColor = "#21334C", 
-  strokeWidth = 1.5 
+  color = "#5E00FF",
+  strokeColor = "#5E00FF",
+  strokeWidth = 1.5,
 }) => {
   return (
     <svg
@@ -19,8 +19,23 @@ export const IconUserMeeting: React.FC<IconUserMeetingProps> = ({
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <circle cx="6.75" cy="4.5" r="3" fill={color} stroke={strokeColor} strokeWidth={strokeWidth} />
-      <ellipse cx="6.75" cy="12.75" rx="5.25" ry="3" fill={color} stroke={strokeColor} strokeWidth={strokeWidth} />
+      <circle
+        cx="6.75"
+        cy="4.5"
+        r="3"
+        fill={color}
+        stroke={strokeColor}
+        strokeWidth={strokeWidth}
+      />
+      <ellipse
+        cx="6.75"
+        cy="12.75"
+        rx="5.25"
+        ry="3"
+        fill={color}
+        stroke={strokeColor}
+        strokeWidth={strokeWidth}
+      />
       <path
         d="M15.75 12.75C15.75 13.993 14.223 15 12.359 15C12.908 14.4 13.286 13.647 13.286 12.751C13.286 11.855 12.908 11.101 12.357 10.5C14.221 10.5 15.75 11.508 15.75 12.75Z"
         fill={color}
