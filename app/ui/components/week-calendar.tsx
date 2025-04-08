@@ -1,35 +1,102 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { DAYS, HOURS } from "@/utils/utils";
 import { IconArrow } from "../svg/icon-arrow";
 import { useMeetingsStore } from "@/app/store/use-meetings-store";
 
+interface CalendarEvent {
+  id: string;
+  title: string;
+  day: string;
+  startTime: string;
+  endTime: string;
+  color: string;
+}
+
 export default function WeekCalendar() {
+  const [isClient, setIsClient] = useState(false);
+  const [currentWeek, setCurrentWeek] = useState<{ start: Date; end: Date }>();
   const meetings = useMeetingsStore((state) => state.meetings);
 
+  useEffect(() => {
+    setIsClient(true);
+    // Initialize with current week
+    const now = new Date();
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() - now.getDay());
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    setCurrentWeek({ start: startOfWeek, end: endOfWeek });
+  }, []);
+
   const handlePrev = () => {
-    console.log("Prev week");
+    if (!currentWeek) return;
+    const newStart = new Date(currentWeek.start);
+    newStart.setDate(newStart.getDate() - 7);
+    const newEnd = new Date(newStart);
+    newEnd.setDate(newStart.getDate() + 6);
+    setCurrentWeek({ start: newStart, end: newEnd });
   };
 
   const handleNext = () => {
-    console.log("Next week");
+    if (!currentWeek) return;
+    const newStart = new Date(currentWeek.start);
+    newStart.setDate(newStart.getDate() + 7);
+    const newEnd = new Date(newStart);
+    newEnd.setDate(newStart.getDate() + 6);
+    setCurrentWeek({ start: newStart, end: newEnd });
   };
 
-  // Конвертуємо зустрічі у формат для календаря
-  const calendarEvents = meetings.map(meeting => {
-    const [date, time] = meeting.dateTime.split(', ');
-    const [startTime] = time.split('-');
-    const day = new Date(date).toLocaleDateString('en-US', { weekday: 'short' });
-    
+  const formatDateRange = () => {
+    if (!currentWeek) return "Loading...";
+    const options: Intl.DateTimeFormatOptions = {
+      month: "short",
+      day: "numeric",
+    };
+    return `${currentWeek.start.toLocaleDateString(
+      "en-US",
+      options
+    )} – ${currentWeek.end.toLocaleDateString(
+      "en-US",
+      options
+    )}, ${currentWeek.end.getFullYear()}`;
+  };
+
+  const parseMeetingDate = (dateStr: string) => {
+    // Ensure consistent date parsing on client side
+    const [datePart, timePart] = dateStr.split(", ");
+    const [startTime, endTime] = timePart.split("-");
+
+    // Parse date in UTC to avoid timezone issues
+    const date = new Date(datePart + "T00:00:00Z");
+    const day = date.toLocaleDateString("en-US", {
+      weekday: "short",
+      timeZone: "UTC",
+    });
+
+    return { day, startTime, endTime };
+  };
+
+  const calendarEvents: CalendarEvent[] = meetings.map((meeting) => {
+    const { day, startTime, endTime } = parseMeetingDate(meeting.dateTime);
+
     return {
       id: meeting.id,
       title: meeting.name,
       day,
       startTime,
-      endTime: time.split('-')[1],
-      color: meeting.stripeColor
+      endTime,
+      color: meeting.stripeColor,
     };
   });
+
+  if (!isClient) {
+    return (
+      <div className="p-4 bg-white rounded-md shadow border border-purple-100 h-96">
+        Loading calendar...
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 bg-white rounded-md shadow border border-purple-100">
@@ -43,7 +110,7 @@ export default function WeekCalendar() {
         </button>
 
         <h2 className="font-semibold text-lg text-purple-900">
-          May 5 – May 11, 2025
+          {formatDateRange()}
         </h2>
 
         <button
@@ -86,21 +153,20 @@ export default function WeekCalendar() {
 
                   return (
                     <td
-                      key={day.label}
+                      key={`${day.label}-${hour}`}
                       className="p-2 border border-purple-100 align-top relative"
                     >
                       {eventsInCell.map((ev) => (
                         <div
                           key={ev.id}
-                          className="text-sm rounded px-1"
-                          style={{ 
-                            backgroundColor: ev.color + '20',
+                          className="text-sm rounded px-1 mb-1 truncate"
+                          style={{
+                            backgroundColor: `${ev.color}20`,
                             color: ev.color,
-                            border: `1px solid ${ev.color}40`
+                            border: `1px solid ${ev.color}40`,
                           }}
                         >
-                          {ev.title} <br />
-                          {ev.startTime} – {ev.endTime}
+                          {ev.title} ({ev.startTime}–{ev.endTime})
                         </div>
                       ))}
                     </td>

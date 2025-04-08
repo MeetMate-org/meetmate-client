@@ -1,23 +1,23 @@
 "use client";
 
 import React from "react";
-import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
-interface MeetingsTabsProps {
+interface VotingTabsProps {
   children: React.ReactNode;
 }
 
-export const MeetingsTabs: React.FC<MeetingsTabsProps> = ({ children }) => {
+export const VotingTabs: React.FC<VotingTabsProps> = ({ children }) => {
   const pathname = usePathname();
-  const isHost = pathname === "/meetings/host";
-  const isAttend = pathname === "/meetings/attend";
+  const isHost = pathname === "/voting/host";
+  const isAttend = pathname === "/voting/attend";
 
   return (
     <>
       <div className="flex space-x-4 my-4 justify-center bg-colorPrimary py-2 rounded-lg md:bg-transparent">
         <Link
-          href={"/meetings/host"}
+          href={"/voting/host"}
           className={`flex items-center space-x-2 px-4 py-2 text-white rounded-lg transition-colors ${
             isHost
               ? "bg-black text-white hover:opacity-80"
@@ -27,14 +27,14 @@ export const MeetingsTabs: React.FC<MeetingsTabsProps> = ({ children }) => {
           I'm hosting
         </Link>
         <Link
-          href={"/meetings/attend"}
+          href={"/voting/attend"}
           className={`flex items-center space-x-2 px-4 py-2 text-white rounded-lg transition-colors ${
             isAttend
               ? "bg-black text-white hover:opacity-80"
               : "bg-transparent text-white md:text-gray-600"
           }`}
         >
-          <span>I'm attending</span>
+          I'm attending
         </Link>
       </div>
       {children}
@@ -42,4 +42,4 @@ export const MeetingsTabs: React.FC<MeetingsTabsProps> = ({ children }) => {
   );
 };
 
-MeetingsTabs.displayName = "MeetingsTabs";
+VotingTabs.displayName = "VotingTabs";
