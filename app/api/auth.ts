@@ -35,7 +35,7 @@ export const getUserById = async (token: string, shortId: string) => {
 
 export const singup = async (username: string, email: string, password: string) => {
     try {
-        const respone = await axios.post('/auth/singup', {username, email, password});
+        const respone = await axios.post(`${apiUrl}/auth/signup`, {username, email, password});
         return respone.data;
     } catch (error) {
         console.error("Error sing up", error);

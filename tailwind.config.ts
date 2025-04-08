@@ -19,6 +19,7 @@ export default {
       },
       fontFamily: {
         montserrat: ["Montserrat", "sans-serif"],
+        encodesanssc: ["Encode Sans SC", "sans-serif"],
       },
     },
   },
