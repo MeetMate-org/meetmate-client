@@ -15,9 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={montserrat.className}>
-        <Sidebar isOpen={true}>
-          {children}
-        </Sidebar>
+        <Sidebar isOpen={true}>{children}</Sidebar>
       </body>
     </html>
   );
