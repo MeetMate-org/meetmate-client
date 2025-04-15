@@ -9,6 +9,7 @@ import { IconLetter } from "../svg/icon-letter";
 import { IconUserMeeting } from "../svg/icon-user-meeting";
 import { colorPrimary } from "@/utils/utils";
 import { useSidebarStore } from "@/app/store/use-sidebar-store";
+import { useScheduleModalStore } from "@/app/store/use-schedule-store";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -29,6 +30,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ children }) => {
     pathname.includes(href) ? colorPrimary : "#ffffff";
 
   const { toggleSidebar, isSidebarOpen } = useSidebarStore();
+  const { toggleScheduleModal } = useScheduleModalStore();
 
   return (
     <>
@@ -66,7 +68,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ children }) => {
             </Link>
           </nav>
 
-          <button className="w-full border border-white text-white rounded-md px-3 py-2 mb-2 hover:bg-colorPrimary">
+          <button onClick={() => {
+            toggleScheduleModal();
+            toggleSidebar();
+          }} 
+          className="w-full border border-white text-white rounded-md px-3 py-2 mb-2 hover:bg-colorPrimary">
             + Meeting
           </button>
         </div>
