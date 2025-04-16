@@ -1,74 +1,67 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { useRouter } from "next/navigation";
-import { getUserById } from "./api/auth";
+import React, { useEffect } from "react";
+import Header from "@/app/ui/components/header";
+import { Tabs } from "@/app/ui/components/tabs";
+import { AuthModal } from "./ui/modals/auth-modal";
 import { useAuthStore } from "./store/use-auth-store";
 
-import { GreetingsBox } from "./ui/components/greetings-box";
-import Header from "./ui/components/header";
-import { Tabs } from "./ui/components/tabs";
-
 export default function Home() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const router = useRouter();
-  const { setUser } = useAuthStore();
-
-  const initAuth = useCallback(async () => {
-    const token = localStorage.getItem("token");
-    const shortId = localStorage.getItem("shortId");
-
-    if (!token || !shortId) {
-      router.push("/auth/login");
-      return;
-    }
-
-    try {
-      const userData = await getUserById(token, shortId);
-      console.log("User data received:", userData);
-
-      if (userData && userData.username) {
-        setUser({
-          id: shortId,
-          email: userData.username,
-          name: userData.username,
-          role: "user",
-        });
-        // Перенаправляємо на board за замовчуванням
-        router.push("/home/board");
-      } else {
-        console.error("Invalid user data structure:", userData);
-        router.push("/auth/login");
-      }
-    } catch (error) {
-      console.error("Error loading user data:", error);
-      router.push("/auth/login");
-    }
-  }, [router, setUser]);
+  const { user } = useAuthStore();
 
   useEffect(() => {
-    initAuth();
-  }, [initAuth]);
+    // Перевірка авторизації: не потрібно показувати авторизаційне вікно для залогінених користувачів
+    const token = localStorage.getItem("token");
+    const shortId = localStorage.getItem("shortId");
+    
+    // Якщо є токен та ID, але немає об'єкта користувача - можна спробувати отримати дані
+    if (token && shortId && !user) {
+      // Тут можна додати логіку завантаження даних користувача
+    }
+  }, [user]);
 
   return (
     <div className="flex h-screen bg-gray-100">
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header />
-
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
-          <GreetingsBox />
-
           <div className="container mx-auto px-6 py-8">
+            <h1 className="text-3xl font-bold mb-4">Welcome to MeetMate</h1>
+            <p>Your ultimate meeting management platform.</p>
             <Tabs>
-              {/* Your tab content goes here */}
               <div className="tab-content">
-                <h2>Welcome to the Home page</h2>
-                <p>Please choose the tab you want to view.</p>
+                <h2>Welcome to the Home Page</h2>
+                <p>Select a tab to view different content.</p>
+                
+                {/* Authentication Buttons */}
+                {!user && (
+                  <div className="mt-6">
+                    <button 
+                      onClick={() => window.openAuthModal && window.openAuthModal()} 
+                      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-4"
+                    >
+                      Sign In
+                    </button>
+                    <button 
+                      onClick={() => {
+                        if (window.openAuthModal) {
+                          window.openAuthModal();
+                          // Додаткову логіку для переключення на реєстрацію можна додати тут
+                        }
+                      }} 
+                      className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                    >
+                      Create Account
+                    </button>
+                  </div>
+                )}
               </div>
             </Tabs>
           </div>
         </main>
       </div>
+      {/* Модальне вікно автентифікації */}
+      <AuthModal />
     </div>
   );
 }

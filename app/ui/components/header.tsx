@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { IconLogo } from "../svg/icon-logo";
 import { IconBell } from "../svg/icon-bell";
 import { IconUserCircle } from "../svg/icon-user-circle";
@@ -9,23 +9,35 @@ import { useModalStore } from '@/app/store/use-modal-store';
 import { useAuthStore } from '@/app/store/use-auth-store';
 import { colorPrimary } from "@/utils/utils";
 import { UserInfoModal } from "./user-info-modal";
+import { AuthOptionsModal } from "./auth-options-modal";
 import { useSidebarStore } from "@/app/store/use-sidebar-store";
 
 const Header = () => {
   const { isModalOpen, toggleModal } = useModalStore();
   const { user } = useAuthStore();
   const userButtonRef = useRef<HTMLButtonElement>(null);
+  
+  // Додаємо стан для модального вікна неавторизованих користувачів
+  const [isAuthOptionsOpen, setIsAuthOptionsOpen] = useState(false);
 
   const handleUserClick = () => {
-    console.log('User clicked, current modal state:', isModalOpen);
-    console.log('Current user:', user);
-    toggleModal();
+    // Якщо користувач не автентифікований, відкриваємо модальне вікно з опціями авторизації
+    if (!user) {
+      setIsAuthOptionsOpen(true);
+    } else {
+      // Якщо користувач автентифікований, відкриваємо модальне вікно профілю
+      toggleModal();
+    }
   };
 
   const { toggleSidebar } = useSidebarStore();
 
   const handleToggleSidebar = () => {
     toggleSidebar();
+  };
+  
+  const closeAuthOptions = () => {
+    setIsAuthOptionsOpen(false);
   };
 
   return (
@@ -44,10 +56,17 @@ const Header = () => {
             >
               <IconUserCircle />
             </button>
-            {isModalOpen && (
+            {isModalOpen && user && (
               <UserInfoModal
                 isOpen={isModalOpen}
                 buttonRef={userButtonRef}
+              />
+            )}
+            {isAuthOptionsOpen && !user && (
+              <AuthOptionsModal
+                isOpen={isAuthOptionsOpen}
+                buttonRef={userButtonRef}
+                onClose={closeAuthOptions}
               />
             )}
           </div>
