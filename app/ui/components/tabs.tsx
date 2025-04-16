@@ -18,11 +18,9 @@ export const Tabs: React.FC<TabsProps> = ({ children }) => {
   const isBoard = pathname === "/home/board";
   const isCalendar = pathname === "/home/calendar";
 
-  // Handler for authenticated navigation
   const handleNavigation = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (!user) {
       e.preventDefault();
-      // Open the auth modal if user is not authenticated
       if (window.openAuthModal) {
         window.openAuthModal();
       }

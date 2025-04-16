@@ -19,23 +19,23 @@ export default function HomeLayout({
 
   const initAuth = useCallback(async () => {
     const token = localStorage.getItem("token");
-    const shortId = localStorage.getItem("shortId");
+    const userId = localStorage.getItem("userId");
 
-    if (!token || !shortId) {
+    if (!token || !userId) {
       router.push("/");
       return;
     }
 
     try {
       const userData = await queryClient.fetchQuery({
-        queryKey: ['user', shortId],
+        queryKey: ['user', userId],
         queryFn: async () => {
           const apiUrl = process.env.NEXT_PUBLIC_API_URL;
           if (!apiUrl) {
             throw new Error("API URL is not defined!");
           }
           
-          const response = await fetch(`${apiUrl}/auth/getUserById?shortId=${shortId}`, {
+          const response = await fetch(`${apiUrl}/user/${userId}`, {
             headers: {
               'x-access-token': token
             }
@@ -51,7 +51,7 @@ export default function HomeLayout({
 
       if (userData?.username) {
         setUser({
-          id: shortId,
+          id: userId,
           email: userData.email || userData.username,
           name: userData.name || userData.username,
           role: userData.role || "user",

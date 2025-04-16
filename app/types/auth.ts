@@ -13,7 +13,7 @@ export interface LoginResponse {
 
 export interface AuthResponse {
   token: string;
-  shortId: string;
+  userId: string;
 }
 
 export interface OtpVerifyResponse {

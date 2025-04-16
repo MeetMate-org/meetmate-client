@@ -20,7 +20,6 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
     e.preventDefault();
     setError(null);
     
-    // Simple email validation
     if (!email.trim()) {
       setError('Enter your email address');
       return;

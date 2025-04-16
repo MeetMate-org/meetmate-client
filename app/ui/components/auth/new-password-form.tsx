@@ -4,14 +4,12 @@ import React, { useState } from 'react';
 import { IconEye } from '../../svg/icon-eye';
 
 interface NewPasswordFormProps {
-  resetToken: string;
-  onSubmit: (token: string, newPassword: string) => void;
+  onSubmit: (newPassword: string) => void;
   onCancel: () => void;
   isLoading?: boolean;
 }
 
 export const NewPasswordForm: React.FC<NewPasswordFormProps> = ({
-  resetToken,
   onSubmit,
   onCancel,
   isLoading = false
@@ -26,7 +24,6 @@ export const NewPasswordForm: React.FC<NewPasswordFormProps> = ({
     e.preventDefault();
     setError(null);
     
-    // Password validation
     if (!password) {
       setError('Enter a password');
       return;
@@ -42,7 +39,7 @@ export const NewPasswordForm: React.FC<NewPasswordFormProps> = ({
       return;
     }
     
-    onSubmit(resetToken, password);
+    onSubmit(password);
   };
 
   return (

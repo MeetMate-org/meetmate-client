@@ -11,7 +11,8 @@ if (!apiUrl) {
 export const useLogin = () => {
   return useMutation<LoginResponse, Error, { identifier: string; password: string }>({
     mutationFn: async (credentials) => {
-      const response = await axios.post(`${apiUrl}/auth/login`, credentials);
+      const response = await axios.post(`${apiUrl}/user/login`, credentials);
+      console.log("Server response:", response.data);
       return response.data as LoginResponse;
     },
     onError: (error: Error) => {
@@ -24,7 +25,7 @@ export const useLogin = () => {
 export const useSignup = () => {
   return useMutation<AuthResponse, Error, { username: string; email: string; password: string }>({
     mutationFn: async (userData) => {
-      const response = await axios.post(`${apiUrl}/auth/signup`, userData);
+      const response = await axios.post(`${apiUrl}/user/signup`, userData);
       return response.data as AuthResponse;
     },
     onError: (error: Error) => {
@@ -34,18 +35,17 @@ export const useSignup = () => {
 };
 
 // Hook for getting user by ID
-export const useGetUserById = (token: string, shortId: string) => {
+export const useGetUserById = (token: string, id: string) => {
   return useQuery<User, Error>({
-    queryKey: ["user", shortId],
+    queryKey: ["user"],
     queryFn: async (): Promise<User> => {
-      const response = await axios.get(`${apiUrl}/auth/getUserById`, {
+      const response = await axios.get(`${apiUrl}/user/${id}`, {
         headers: { "x-access-token": token },
-        params: { shortId },
       });
       console.log("Server response:", response.data);
       return response.data as User;
     },
-    enabled: Boolean(token) && Boolean(shortId),
+    enabled: Boolean(token),
   });
 };
 
@@ -54,7 +54,7 @@ export const useVerifyOtp = () => {
   return useMutation<
     OtpVerifyResponse, 
     Error, 
-    { email: string; otp: string; emailOnly?: boolean }
+    { email: string; otpToken: string; emailOnly?: boolean }
   >({
     mutationFn: async (verifyData) => {
       const response = await axios.post(`${apiUrl}/user/verify-otp`, verifyData);
@@ -67,10 +67,10 @@ export const useVerifyOtp = () => {
 };
 
 // Hook for resending OTP
-export const useResendOtp = () => {
+export const useResendOtp = (userId: string) => {
   return useMutation<{ success: boolean; message: string }, Error, { email: string }>({
     mutationFn: async (emailData) => {
-      const response = await axios.post(`${apiUrl}/user/resend-otp`, emailData);
+      const response = await axios.post(`${apiUrl}/user/resend-otp/${userId}`, emailData);
       return response.data;
     },
     onError: (error: Error) => {
@@ -151,11 +151,10 @@ export const useResetPassword = () => {
   return useMutation<
     ResetPasswordResponse, 
     Error, 
-    { token: string; newPassword: string }
+    { newPassword: string }
   >({
-    mutationFn: async ({ token, newPassword }) => {
+    mutationFn: async ({ newPassword }) => {
       const response = await axios.post(`${apiUrl}/user/reset-password`, {
-        token,
         newPassword,
       });
       return response.data as ResetPasswordResponse;

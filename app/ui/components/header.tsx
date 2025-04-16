@@ -17,15 +17,12 @@ const Header = () => {
   const { user } = useAuthStore();
   const userButtonRef = useRef<HTMLButtonElement>(null);
   
-  // Додаємо стан для модального вікна неавторизованих користувачів
   const [isAuthOptionsOpen, setIsAuthOptionsOpen] = useState(false);
 
   const handleUserClick = () => {
-    // Якщо користувач не автентифікований, відкриваємо модальне вікно з опціями авторизації
     if (!user) {
       setIsAuthOptionsOpen(true);
     } else {
-      // Якщо користувач автентифікований, відкриваємо модальне вікно профілю
       toggleModal();
     }
   };

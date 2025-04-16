@@ -58,7 +58,7 @@ export const UserInfoModal: React.FC<UserInfoModalProps> = ({ isOpen, buttonRef 
 
   const handleEditProfile = () => {
     setIsProfileModalOpen(true);
-    toggleModal(); // Закриваємо поточне модальне вікно
+    toggleModal();
   };
 
   return (
@@ -81,16 +81,12 @@ export const UserInfoModal: React.FC<UserInfoModalProps> = ({ isOpen, buttonRef 
           </div>
           
           <div className="space-y-3">
-            <div>
-              <h3 className="text-xs font-medium text-gray-500">Role</h3>
-              <p className="text-sm text-gray-900">{user.role}</p>
-            </div>
-            
             <button
               onClick={handleEditProfile}
+              disabled={true}
               className="w-full px-3 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
             >
-              Редагувати профіль
+              Edit Profile
             </button>
             
             <button

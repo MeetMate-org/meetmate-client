@@ -20,7 +20,7 @@ import { useAuthStore } from "@/app/store/use-auth-store";
 // Interface for login API response
 interface ApiLoginResponse {
   token: string;
-  shortId: string;
+  userId: string;
   success?: boolean;
   error?: string;
 }
@@ -33,16 +33,15 @@ export const AuthModal = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [modalType, setModalType] = useState<"signup" | "login" | "otp" | "forgot_password" | "reset_password">("login");
   const [registeredEmail, setRegisteredEmail] = useState<string>("");
-  const [resetToken, setResetToken] = useState<string>("");
   
   // On first load, check if authentication exists
   useEffect(() => {
     const token = localStorage.getItem("token");
-    const shortId = localStorage.getItem("shortId");
+    const userId = localStorage.getItem("userId");
     const isFirstVisit = localStorage.getItem("visited") !== "true";
     
     // If this is the first visit and the user is not authenticated, open the modal window
-    if (isFirstVisit && (!token || !shortId)) {
+    if (isFirstVisit && (!token || !userId)) {
       setIsOpen(true);
       localStorage.setItem("visited", "true");
     }
@@ -92,10 +91,9 @@ export const AuthModal = () => {
   const signUpMutation = useSignup();
   const loginMutation = useLogin();
   const verifyOtpMutation = useVerifyOtp();
-  const resendOtpMutation = useResendOtp();
+  const resendOtpMutation = useResendOtp(localStorage.getItem("userId") || "");
   const resetPasswordMutation = useResetPassword();
 
-  // Get mutation status instead of isLoading
   const isSignupLoading = signUpMutation.status === "pending";
   const isLoginLoading = loginMutation.status === "pending";
   const isVerifyOtpLoading = verifyOtpMutation.status === "pending";
@@ -124,7 +122,6 @@ export const AuthModal = () => {
           googleButtonText="Sign Up with Google"
           alternativeActionText="Already have an account? Sign In"
           onSubmit={(data) => {
-            // Ensure data has string type
             const username = data.username ?? "";
             const email = data.email ?? "";
             const password = data.password ?? "";
@@ -133,13 +130,12 @@ export const AuthModal = () => {
               {
                 onSuccess: (response) => {
                   console.log("Signup successful:", response);
-                  // Save token and shortId
-                  if (response && response.token && response.shortId) {
-                    localStorage.setItem("token", response.token);
-                    localStorage.setItem("shortId", response.shortId);
-                    setRegisteredEmail(email);
-                    switchToOTP();
-                  }
+                  localStorage.setItem("token", response.token);
+                  localStorage.setItem("userId", response.userId);
+                  localStorage.setItem("email", email);
+                  localStorage.setItem("name", username);
+                  setRegisteredEmail(email);
+                  switchToOTP();
                 },
                 onError: (error) => {
                   console.error("Signup error:", error);
@@ -180,11 +176,18 @@ export const AuthModal = () => {
               {
                 onSuccess: (response) => {
                   console.log("Login successful:", response);
-                  const apiResponse = response as unknown as ApiLoginResponse;
+                  const apiResponse = response as unknown as ApiLoginResponse & {
+                    email?: string;
+                    name?: string;
+                  };;
                   
-                  if (apiResponse && apiResponse.token && apiResponse.shortId) {
+                  if (apiResponse && apiResponse.token && apiResponse.userId) {
                     localStorage.setItem("token", apiResponse.token);
-                    localStorage.setItem("shortId", apiResponse.shortId);
+                    localStorage.setItem("userId", apiResponse.userId);
+
+                    if (apiResponse.email) localStorage.setItem("email", apiResponse.email);
+                    if (apiResponse.name) localStorage.setItem("name", apiResponse.name);
+
                     handleClose();
                     router.push("/home/board");
                   } else {
@@ -220,7 +223,7 @@ export const AuthModal = () => {
           onSubmit={(email) => {
             setRegisteredEmail(email);
             verifyOtpMutation.mutate(
-              { email, otp: "", emailOnly: true },
+              { email, otpToken: "", emailOnly: true },
               {
                 onSuccess: (response) => {
                   console.log("Password reset OTP sent:", response);
@@ -252,21 +255,17 @@ export const AuthModal = () => {
           onSubmit={(code) => {
             console.log("OTP code entered:", code);
             verifyOtpMutation.mutate(
-              { email: registeredEmail, otp: code },
+              { email: registeredEmail, otpToken: code },
               {
                 onSuccess: (response) => {
                   console.log("OTP verification successful:", response);
-                  if (response.success) {
                     if (response.token) {
-                      setResetToken(response.token);
-                      switchToResetPassword();
-                    } else {
                       handleClose();
+                      localStorage.setItem("token", response.token);
                       router.push("/home/board");
+                    } else {
+                      switchToResetPassword();
                     }
-                  } else {
-                    console.error("OTP verification failed:", response.error);
-                  }
                 },
                 onError: (error) => {
                   console.error("OTP verification error:", error);
@@ -304,10 +303,9 @@ export const AuthModal = () => {
         }}
       >
         <NewPasswordForm
-          resetToken={resetToken}
-          onSubmit={(token, newPassword) => {
+          onSubmit={(newPassword) => {
             resetPasswordMutation.mutate(
-              { token, newPassword },
+              { newPassword },
               {
                 onSuccess: (response) => {
                   console.log("Password reset successful:", response);
