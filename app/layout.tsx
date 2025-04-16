@@ -3,7 +3,7 @@
 import { Montserrat } from "next/font/google";
 import "./globals.css";
 import { Sidebar } from "./ui/components/Sidebar";
-import { useSidebarStore } from "./store/use-sidebar-store";
+import { Providers } from "./providers"; 
 
 const montserrat = Montserrat({ subsets: ["latin"], weight: "400" });
 
@@ -15,7 +15,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={montserrat.className}>
-        <Sidebar isOpen={true}>{children}</Sidebar>
+        <Providers>
+          <Sidebar isOpen={true}>{children}</Sidebar>
+        </Providers>
       </body>
     </html>
   );

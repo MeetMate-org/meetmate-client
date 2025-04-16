@@ -6,7 +6,6 @@ import { IconLogo } from "../svg/icon-logo";
 import { IconHome } from "../svg/icon-home";
 import { IconCalender } from "../svg/icon-calendar";
 import { IconLetter } from "../svg/icon-letter";
-import { IconUserMeeting } from "../svg/icon-user-meeting";
 import { colorPrimary } from "@/utils/utils";
 import { useSidebarStore } from "@/app/store/use-sidebar-store";
 
@@ -32,7 +31,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ children }) => {
 
   return (
     <>
-      {/* Оверлей */}
       <div
         className={`fixed inset-0 bg-black bg-opacity-30 z-40 transition-opacity duration-300 ${
           isSidebarOpen ? "opacity-100" : "opacity-0 pointer-events-none"
@@ -40,7 +38,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ children }) => {
         onClick={toggleSidebar}
       ></div>
 
-      {/* Сайдбар */}
       <div
         className={`fixed top-0 left-0 h-screen w-64 bg-colorPrimary text-white z-50 transform transition-transform duration-300 ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"

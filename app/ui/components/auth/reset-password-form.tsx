@@ -1,85 +1,36 @@
 "use client";
 
 import React, { useState } from 'react';
-import { IconEye } from '../../svg/icon-eye';
 
 interface ResetPasswordFormProps {
-  email: string;
-  onSubmit: (email: string, password: string) => void;
-}
-
-interface FormErrors {
-  email: string;
-  password: string;
-  confirmPassword: string;
+  onSubmit: (email: string) => void;
+  onCancel: () => void;
+  isLoading?: boolean;
 }
 
 export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
-  email: initialEmail,
-  onSubmit
+  onSubmit,
+  onCancel,
+  isLoading = false
 }) => {
-  const [email, setEmail] = useState(initialEmail);
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [errors, setErrors] = useState<FormErrors>({
-    email: '',
-    password: '',
-    confirmPassword: ''
-  });
-
-  const validateForm = (): boolean => {
-    let isValid = true;
-    const newErrors: FormErrors = {
-      email: '',
-      password: '',
-      confirmPassword: ''
-    };
-
-    // Email validation
-    if (!email) {
-      newErrors.email = 'Email is required';
-      isValid = false;
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = 'Email format is invalid';
-      isValid = false;
-    }
-
-    // Password validation
-    if (!password) {
-      newErrors.password = 'Password is required';
-      isValid = false;
-    } else {
-      if (password.length < 8) {
-        newErrors.password = 'Password must be at least 8 characters long';
-        isValid = false;
-      }
-      if (/\s/.test(password)) {
-        newErrors.password = 'Password must not contain spaces';
-        isValid = false;
-      }
-      if (!/^[A-Za-z0-9!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]+$/.test(password)) {
-        newErrors.password = 'Password must contain only English letters, numbers and special characters';
-        isValid = false;
-      }
-    }
-
-    // Confirm password validation
-    if (password !== confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
-      isValid = false;
-    }
-
-    setErrors(newErrors);
-    return isValid;
-  };
+  const [email, setEmail] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateForm()) {
-      onSubmit(email, password);
+    setError(null);
+    
+    if (!email.trim()) {
+      setError('Enter your email address');
+      return;
     }
+    
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setError('Enter a valid email address');
+      return;
+    }
+    
+    onSubmit(email);
   };
 
   return (
@@ -88,86 +39,51 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
         Reset Password
       </h2>
       
-      <p className="text-gray-600 mb-8 text-center">
-        Please enter your email and create a new password
+      <p className="text-gray-600 mb-6 text-center">
+        Enter your email address. We&apos;ll send you a verification code to reset your password.
       </p>
-
+      
+      {error && (
+        <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+          {error}
+        </div>
+      )}
+      
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="space-y-2">
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-            Email
+        <div>
+          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+            Email Address
           </label>
           <input
-            id="email"
             type="email"
+            id="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-[#21334C] focus:ring-1 focus:ring-[#21334C] outline-none"
-            placeholder="Enter your email..."
+            className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#21334C] focus:border-transparent"
+            placeholder="Enter your email address"
+            required
+            disabled={isLoading}
           />
-          {errors.email && (
-            <p className="text-red-500 text-sm">{errors.email}</p>
-          )}
         </div>
-
-        <div className="space-y-2">
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-            New Password
-          </label>
-          <div className="relative">
-            <input
-              id="password"
-              type={showPassword ? 'text' : 'password'}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-[#21334C] focus:ring-1 focus:ring-[#21334C] outline-none"
-              placeholder="Enter new password..."
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2"
-            >
-              <IconEye isOpen={showPassword} />
-            </button>
-          </div>
-          {errors.password && (
-            <p className="text-red-500 text-sm">{errors.password}</p>
-          )}
+        
+        <div className="flex space-x-4">
+          <button
+            type="submit"
+            className="flex-1 bg-[#21334C] text-white py-3 rounded-lg font-medium hover:bg-opacity-90 transition-colors disabled:opacity-50"
+            disabled={isLoading}
+          >
+            {isLoading ? 'Sending...' : 'Send Code'}
+          </button>
+          
+          <button
+            type="button"
+            onClick={onCancel}
+            className="flex-1 bg-gray-200 text-gray-800 py-3 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+            disabled={isLoading}
+          >
+            Cancel
+          </button>
         </div>
-
-        <div className="space-y-2">
-          <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-            Confirm Password
-          </label>
-          <div className="relative">
-            <input
-              id="confirmPassword"
-              type={showConfirmPassword ? 'text' : 'password'}
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-[#21334C] focus:ring-1 focus:ring-[#21334C] outline-none"
-              placeholder="Re-enter new password..."
-            />
-            <button
-              type="button"
-              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2"
-            >
-              <IconEye isOpen={showConfirmPassword} />
-            </button>
-          </div>
-          {errors.confirmPassword && (
-            <p className="text-red-500 text-sm">{errors.confirmPassword}</p>
-          )}
-        </div>
-
-        <button
-          type="submit"
-          className="w-full bg-[#21334C] text-white py-4 rounded-xl text-lg font-semibold hover:bg-opacity-90 transition-colors"
-        >
-          Reset Password
-        </button>
       </form>
     </div>
   );
