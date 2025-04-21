@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect, useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getUserById } from "../api/auth";
 import { useAuthStore } from "../store/use-auth-store";
 import Header from "../ui/components/header";
 import { Tabs } from "../ui/components/tabs";
 import { GreetingsBox } from "../ui/components/greetings-box";
+import { QueryClient } from '@tanstack/react-query';
 
 export default function HomeLayout({
   children,
@@ -15,34 +15,56 @@ export default function HomeLayout({
 }) {
   const router = useRouter();
   const { setUser } = useAuthStore();
+  const [queryClient] = useState(() => new QueryClient());
 
   const initAuth = useCallback(async () => {
     const token = localStorage.getItem("token");
-    const id = localStorage.getItem("id");
+    const userId = localStorage.getItem("userId");
 
-    if (!token || !id) {
-      router.push("/auth/login");
+    if (!token || !userId) {
+      router.push("/");
       return;
     }
 
     try {
-      const userData = await getUserById(token, id);
+      const userData = await queryClient.fetchQuery({
+        queryKey: ['user', userId],
+        queryFn: async () => {
+          const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+          if (!apiUrl) {
+            throw new Error("API URL is not defined!");
+          }
+          
+          const response = await fetch(`${apiUrl}/user/${userId}`, {
+            headers: {
+              'x-access-token': token
+            }
+          });
+          
+          if (!response.ok) {
+            throw new Error("Не вдалося отримати дані користувача");
+          }
+          
+          return response.json();
+        }
+      });
+
       if (userData?.username) {
         setUser({
-          id: id,
-          email: userData.username,
-          name: userData.username,
-          role: "user",
+          id: userId,
+          email: userData.email || userData.username,
+          name: userData.name || userData.username,
+          role: userData.role || "user",
         });
       } else {
         console.error("Invalid user data:", userData);
-        router.push("/auth/login");
+        router.push("/");
       }
     } catch (error) {
       console.error("Error loading user data:", error);
-      router.push("/auth/login");
+      router.push("/");
     }
-  }, [router, setUser]);
+  }, [router, setUser, queryClient]);
 
   useEffect(() => {
     initAuth();
@@ -50,7 +72,6 @@ export default function HomeLayout({
 
   return (
     <div className="flex h-screen bg-gray-100">
-
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header />
 

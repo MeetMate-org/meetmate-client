@@ -6,12 +6,16 @@ interface VerificationFormProps {
   email: string;
   onSubmit: (code: string) => void;
   onResend: () => void;
+  isLoading?: boolean;
+  isResendLoading?: boolean;
 }
 
 export const VerificationForm: React.FC<VerificationFormProps> = ({
   email,
   onSubmit,
-  onResend
+  onResend,
+  isLoading = false,
+  isResendLoading = false
 }) => {
   const [code, setCode] = useState(['', '', '', '', '', '']);
   const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
@@ -86,6 +90,7 @@ export const VerificationForm: React.FC<VerificationFormProps> = ({
               onPaste={handlePaste}
               className="w-12 h-12 text-center text-lg font-semibold border border-gray-300 rounded-lg focus:border-[#21334C] focus:ring-1 focus:ring-[#21334C] outline-none"
               required
+              disabled={isLoading}
             />
           ))}
         </div>
@@ -95,17 +100,19 @@ export const VerificationForm: React.FC<VerificationFormProps> = ({
           <button
             type="button"
             onClick={onResend}
-            className="text-purple-600 font-semibold hover:text-purple-700"
+            className="text-purple-600 font-semibold hover:text-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={isResendLoading}
           >
-            Try again
+            {isResendLoading ? 'Sending...' : 'Try again'}
           </button>
         </div>
 
         <button
           type="submit"
-          className="w-full bg-[#21334C] text-white py-4 rounded-xl text-lg font-semibold hover:bg-opacity-90 transition-colors"
+          className="w-full bg-[#21334C] text-white py-4 rounded-xl text-lg font-semibold hover:bg-opacity-90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={isLoading}
         >
-          Verify
+          {isLoading ? 'Verifying...' : 'Verify'}
         </button>
       </form>
     </div>
