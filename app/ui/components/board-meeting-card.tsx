@@ -16,16 +16,16 @@ interface BoardMeetingCardProps {
 export const BoardMeetingCard: React.FC<BoardMeetingCardProps> = ({ meeting }) => {
   const { deleteMeeting, setSelectedMeetingId } = useMeetingsStore();
 
-  if (!meeting?.id) {
+  if (!meeting?._id) {
     return null;
   }
   
   const handleEdit = () => {
-    setSelectedMeetingId(meeting.id);
+    setSelectedMeetingId(meeting._id);
   };
 
   const handleDelete = () => {
-    deleteMeeting(meeting.id);
+    deleteMeeting(meeting._id);
   };
   
   return (
@@ -33,30 +33,30 @@ export const BoardMeetingCard: React.FC<BoardMeetingCardProps> = ({ meeting }) =
       <div className="p-4">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <h3 className="text-lg font-semibold text-gray-900">{meeting.name}</h3>
+            <h3 className="text-lg font-semibold text-gray-900">{meeting.title}</h3>
             <div className="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center text-sm text-gray-600">
-              {meeting.nameSurname[0].toUpperCase()}
+              M
             </div>
-            <span className="text-gray-600 text-sm">{meeting.nameSurname}</span>
+            <span className="text-gray-600 text-sm">R</span>
           </div>
         </div>
 
         <div className="space-y-2">
           <div className="flex items-center gap-2 text-gray-600 text-sm">
             <IconClock color="#6B7280" />
-            <span>{meeting.duration}</span>
+            <span>{
+              meeting.startTime && meeting.endTime
+                ? `${new Date(meeting.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(meeting.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+                : "No time set"
+              }</span>
           </div>
           <div className="flex items-center gap-2 text-gray-600 text-sm">
             <IconCalender color="#6B7280" />
-            <span>{meeting.dateTime}</span>
+            <span>{new Date(meeting.startTime).toLocaleString()}</span>
           </div>
           <div className="flex items-center gap-2 text-gray-600 text-sm">
             <IconUserMeeting color="#6B7280" />
             <span>{meeting.participants.length} attendees</span>
-          </div>
-          <div className="flex items-center gap-2 text-gray-600 text-sm">
-            <IconTeam color="#6B7280" />
-            <span>{meeting.teamName}</span>
           </div>
         </div>
 

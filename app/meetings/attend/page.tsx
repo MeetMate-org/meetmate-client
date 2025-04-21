@@ -15,9 +15,9 @@ export default function BoardRoute() {
             <p className="text-gray-500">No planned meetings</p>
           </div>
         ) : (
-          meetings.map((meeting) => (
+          meetings.map((meeting, key) => (
             <BoardMeetingCard
-              key={meeting.id}
+              key={key}
               meeting={meeting}
             />
           ))

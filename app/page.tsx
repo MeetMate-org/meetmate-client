@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { getUserById } from "./api/auth";
 import { useAuthStore } from "./store/use-auth-store";
@@ -10,7 +10,6 @@ import Header from "./ui/components/header";
 import { Tabs } from "./ui/components/tabs";
 
 export default function Home() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const router = useRouter();
   const { setUser } = useAuthStore();
 

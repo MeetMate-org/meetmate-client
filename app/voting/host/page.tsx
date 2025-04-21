@@ -16,7 +16,7 @@ export default function AttendRoute() {
             </div>
           ) : (
             meetings.map((meeting) => (
-              <MeetingVoteCard key={meeting.id} meeting={meeting} />
+              <MeetingVoteCard key={meeting._id} meeting={meeting} />
             ))
           )}
         </div>
