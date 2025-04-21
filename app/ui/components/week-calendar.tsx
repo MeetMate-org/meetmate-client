@@ -63,30 +63,58 @@ export default function WeekCalendar() {
   };
 
   const parseMeetingDate = (dateStr: string) => {
-    // Ensure consistent date parsing on client side
-    const [datePart, timePart] = dateStr.split(", ");
-    const [startTime, endTime] = timePart.split("-");
-
-    // Parse date in UTC to avoid timezone issues
-    const date = new Date(datePart + "T00:00:00Z");
-    const day = date.toLocaleDateString("en-US", {
-      weekday: "short",
-      timeZone: "UTC",
-    });
-
-    return { day, startTime, endTime };
+    if (!dateStr) {
+      console.error("Invalid date string:", dateStr);
+      return { day: "Unknown", startTime: "Unknown", endTime: "Unknown" };
+    }
+  
+    try {
+      // Parse the ISO date string
+      const date = new Date(dateStr);
+  
+      if (isNaN(date.getTime())) {
+        console.error("Invalid date format:", dateStr);
+        return { day: "Unknown", startTime: "Unknown", endTime: "Unknown" };
+      }
+  
+      // Extract day and time
+      const day = date.toLocaleDateString("en-US", {
+        weekday: "short",
+        timeZone: "UTC",
+      });
+      const startTime = date.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        timeZone: "UTC",
+      });
+  
+      // Assuming the end time is provided separately, adjust this logic as needed
+      const endTime = "Unknown"; // Replace with actual logic if available
+  
+      return { day, startTime, endTime };
+    } catch (error) {
+      console.error("Error parsing meeting date:", error);
+      return { day: "Unknown", startTime: "Unknown", endTime: "Unknown" };
+    }
   };
 
   const calendarEvents: CalendarEvent[] = meetings.map((meeting) => {
-    const { day, startTime, endTime } = parseMeetingDate(meeting.dateTime);
+    const { day, startTime } = parseMeetingDate(meeting.startTime);
+    const endTime = meeting.endTime
+      ? new Date(meeting.endTime).toLocaleTimeString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+          timeZone: "UTC",
+        })
+      : "Unknown";
 
     return {
-      id: meeting.id,
-      title: meeting.name,
+      id: meeting._id,
+      title: meeting.title,
       day,
       startTime,
       endTime,
-      color: meeting.stripeColor,
+      color: meeting.color || "#000000", // Default color if undefined
     };
   });
 

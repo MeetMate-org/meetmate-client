@@ -16,7 +16,7 @@ export default function CalendarRoute() {
           </div>
         ) : (
           meetings.map((meeting) => (
-            <CalendarMeetingCard key={meeting.id} meeting={meeting} />
+            <CalendarMeetingCard key={meeting._id} meeting={meeting} />
           ))
         )}
       </div>
