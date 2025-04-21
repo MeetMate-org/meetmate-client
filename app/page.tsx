@@ -16,20 +16,20 @@ export default function Home() {
 
   const initAuth = useCallback(async () => {
     const token = localStorage.getItem("token");
-    const shortId = localStorage.getItem("shortId");
+    const id = localStorage.getItem("id");
 
-    if (!token || !shortId) {
+    if (!token || !id) {
       router.push("/auth/login");
       return;
     }
 
     try {
-      const userData = await getUserById(token, shortId);
+      const userData = await getUserById(token, id);
       console.log("User data received:", userData);
 
       if (userData && userData.username) {
         setUser({
-          id: shortId,
+          id: id,
           email: userData.username,
           name: userData.username,
           role: "user",

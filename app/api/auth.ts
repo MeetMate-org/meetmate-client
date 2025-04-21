@@ -8,7 +8,7 @@ if (!apiUrl) {
 
 export const login = async (identifier: string, password: string) => {
     try {
-        const response = await axios.post(`${apiUrl}/auth/login`, {
+        const response = await axios.post(`${apiUrl}/user/login`, {
             identifier,
             password
         });
@@ -19,11 +19,10 @@ export const login = async (identifier: string, password: string) => {
     }
 };
 
-export const getUserById = async (token: string, shortId: string) => {
+export const getUserById = async (token: string, id: string) => {
     try {
-        const response = await axios.get(`${apiUrl}/auth/getUserById`, {
+        const response = await axios.get(`${apiUrl}/user/${id}`, {
             headers: { "x-access-token": token },
-            params: { shortId }
         });
         console.log('Server response:', response.data);
         return response.data;
@@ -35,7 +34,7 @@ export const getUserById = async (token: string, shortId: string) => {
 
 export const singup = async (username: string, email: string, password: string) => {
     try {
-        const respone = await axios.post(`${apiUrl}/auth/signup`, {username, email, password});
+        const respone = await axios.post(`${apiUrl}/user/signup`, {username, email, password});
         return respone.data;
     } catch (error) {
         console.error("Error sing up", error);

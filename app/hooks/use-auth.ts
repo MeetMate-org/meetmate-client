@@ -12,15 +12,17 @@ export const useAuth = () => {
     setLoading(true);
     try {
       const response = await login(identifier, password);
+      console.log(response);
+      
       
       localStorage.setItem("token", response.token);
-      localStorage.setItem("shortId", response.shortId);
+      localStorage.setItem("id", response.userId);
 
-      const user = await getUserById(response.token, response.shortId);
+      const user = await getUserById(response.token, response.userId);
       
       if (user) {
         setUser({
-          id: response.shortId,
+          id: response.userId,
           email: user.email || '',
           name: user.name || '',
           role: user.role || 'user'
@@ -43,16 +45,16 @@ export const useAuth = () => {
 
   const handleLogout = useCallback(() => {
     localStorage.removeItem("token");
-    localStorage.removeItem("shortId");
+    localStorage.removeItem("id");
     setUser(null);
     router.push("/auth/login");
   }, [router, setUser]);
 
   const checkAuth = async () => {
     const token = localStorage.getItem("token");
-    const shortId = localStorage.getItem("shortId");
+    const id = localStorage.getItem("id");
 
-    if (!token || !shortId) {
+    if (!token || !id) {
       router.push("/auth/login");
       return false;
     }
@@ -63,19 +65,19 @@ export const useAuth = () => {
   useEffect(() => {
     const initAuth = async () => {
       const token = localStorage.getItem("token");
-      const shortId = localStorage.getItem("shortId");
+      const id = localStorage.getItem("id");
 
-      if (!token || !shortId) {
+      if (!token || !id) {
         router.push("/auth/login");
         return;
       }
 
       setLoading(true);
       try {
-        const userData = await getUserById(token, shortId);
+        const userData = await getUserById(token, id);
         if (userData) {
           setUser({
-            id: shortId,
+            id: id,
             email: userData.email || '',
             name: userData.name || '',
             role: userData.role || 'user'

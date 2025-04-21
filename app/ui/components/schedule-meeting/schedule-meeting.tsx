@@ -53,7 +53,7 @@ const ScheduleMeeting = () => {
         }
       />
     ),
-    confirmination: <Confirmination meetingData={meetingData} />,
+    confirmination: <Confirmination meetingData={meetingData} setMeetingData={setMeetingData} />,
   };
 
   type StepKey = keyof typeof steps;

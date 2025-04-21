@@ -12,7 +12,7 @@ export interface LoginResponse {
 
 export interface AuthResponse {
   token: string;
-  shortId: string;
+  id: string;
 }
 
 export interface AuthState {

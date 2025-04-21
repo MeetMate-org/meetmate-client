@@ -1,6 +1,42 @@
+import { createMeeting } from "@/app/services/create-meeting";
 import { MeetingData } from "@/app/types/meeting-data";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { parseISO, format } from "date-fns";
-const Confirmination = ({ meetingData }: { meetingData: MeetingData }) => {
+import { useScheduleModalStore } from "@/app/store/use-schedule-store";
+
+const Confirmination = ({ meetingData, setMeetingData }: { 
+  meetingData: MeetingData,
+
+  setMeetingData: React.Dispatch<React.SetStateAction<{
+    title: string;
+    description: string;
+    duration: string;
+    attendees: string[];
+    selectedTime: string;
+  }>>; 
+}) => {
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: (meetingData: MeetingData) => {
+      const id = localStorage.getItem("id");
+      const token = localStorage.getItem("token");
+      
+      if (!token) {
+        throw new Error("Token is missing");
+      }
+
+      if (!id) {
+        throw new Error("User ID is missing");
+      }
+      
+      return createMeeting(meetingData, id, token);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["meetings"] });
+    },
+  });
+  const { toggleScheduleModal } = useScheduleModalStore();
+
   let selectedDate;
   let isValidDate = false;
 
@@ -9,6 +45,24 @@ const Confirmination = ({ meetingData }: { meetingData: MeetingData }) => {
     isValidDate = !isNaN(selectedDate.getTime());
   } catch (error) {
     console.error("Invalid date format:", meetingData.selectedTime);
+  }
+
+  const handleScheduleMeeting = async () => {
+    if (mutation.status === "pending") return;
+
+    try {
+      await mutation.mutateAsync(meetingData);
+      toggleScheduleModal();
+      setMeetingData({
+        title: "",
+        description: "",
+        duration: "",
+        attendees: [] as string[],
+        selectedTime: "",
+      });
+    } catch (error) {
+      throw new Error(`Error scheduling meeting: ${error}`);
+    }
   }
 
   return (
@@ -89,7 +143,7 @@ const Confirmination = ({ meetingData }: { meetingData: MeetingData }) => {
         />
       </div>
 
-      <button className="mt-4 bg-colorPurple text-white py-2 px-6 rounded-md hover:bg-purple-800">
+      <button onClick={handleScheduleMeeting} className="mt-4 bg-colorPurple text-white py-2 px-6 rounded-md hover:bg-purple-800">
         Schedule meeting
       </button>
     </div>
