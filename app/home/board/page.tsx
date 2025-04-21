@@ -4,7 +4,7 @@ import { useMeetingsStore } from "@/app/store/use-meetings-store";
 import { BoardMeetingCard } from "@/app/ui/components/board-meeting-card";
 
 export default function BoardRoute() {
-  const meetings = useMeetingsStore((state) => state.meetings);
+  const meetings = useMeetingsStore((state) => state.meetings);  
 
   return (
     <>
@@ -15,9 +15,9 @@ export default function BoardRoute() {
             <p className="text-gray-500">No planned meetings</p>
           </div>
         ) : (
-          meetings.map((meeting) => (
+          meetings.map((meeting, key) => (
             <BoardMeetingCard
-              key={meeting.id}
+              key={key}
               meeting={meeting}
             />
           ))
