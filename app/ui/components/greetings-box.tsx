@@ -1,25 +1,10 @@
 "use client";
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useAuthStore } from '@/app/store/use-auth-store';
-import { useMeetingsStore } from '@/app/store/use-meetings-store';
-import { useFetchMeetings } from '@/app/hooks/use-get-meetings';
 
 export const GreetingsBox = () => {
   const { user } = useAuthStore();
-  const { setMeetings } = useMeetingsStore();
-  const { data: meetings, isLoading, isError, error } = useFetchMeetings();
-
-  useEffect(() => {
-    if (isLoading) return; // Avoid unnecessary state updates during loading
-    if (isError) {
-      console.error("Error fetching meetings:", error);
-      return;
-    }
-    if (meetings) {
-      setMeetings(meetings); // Update meetings only when data is available
-    }
-  }, [meetings, isLoading, isError, error, setMeetings]);
 
   return (
     <div className="text-center mb-2 mt-4">

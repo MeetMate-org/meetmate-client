@@ -18,7 +18,7 @@ const Confirmination = ({ meetingData, setMeetingData }: {
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: (meetingData: MeetingData) => {
-      const id = localStorage.getItem("id");
+      const id = localStorage.getItem("userId");
       const token = localStorage.getItem("token");
       
       if (!token) {

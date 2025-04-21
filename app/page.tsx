@@ -10,13 +10,10 @@ export default function Home() {
   const { user } = useAuthStore();
 
   useEffect(() => {
-    // Перевірка авторизації: не потрібно показувати авторизаційне вікно для залогінених користувачів
     const token = localStorage.getItem("token");
-    const shortId = localStorage.getItem("shortId");
+    const userId = localStorage.getItem("userId");
     
-    // Якщо є токен та ID, але немає об'єкта користувача - можна спробувати отримати дані
-    if (token && shortId && !user) {
-      // Тут можна додати логіку завантаження даних користувача
+    if (token && userId && !user) {
     }
   }, [user]);
 

@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getMeetingsByUserId } from "../services/get-meetings";
 
 export const useFetchMeetings = () => {
-  const id = localStorage.getItem("id");
+  const id = localStorage.getItem("userId");
   const token = localStorage.getItem("token");
 
   const query = useQuery({

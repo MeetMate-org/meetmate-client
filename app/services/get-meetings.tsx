@@ -9,8 +9,6 @@ export const getMeetingsByUserId = async (userId: string, token: string) => {
       },
     }
   );
-  console.log(res.data);
-  
 
   return res.data;
 }
