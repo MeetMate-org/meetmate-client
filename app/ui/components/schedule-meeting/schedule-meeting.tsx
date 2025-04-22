@@ -17,6 +17,7 @@ const ScheduleMeeting = () => {
     duration: "",
     attendees: [] as string[],
     selectedTime: "",
+    link: "",
   });
 
   const steps = {

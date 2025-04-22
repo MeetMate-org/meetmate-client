@@ -7,13 +7,7 @@ import { useScheduleModalStore } from "@/app/store/use-schedule-store";
 const Confirmination = ({ meetingData, setMeetingData }: { 
   meetingData: MeetingData,
 
-  setMeetingData: React.Dispatch<React.SetStateAction<{
-    title: string;
-    description: string;
-    duration: string;
-    attendees: string[];
-    selectedTime: string;
-  }>>; 
+  setMeetingData: React.Dispatch<React.SetStateAction<MeetingData>>; 
 }) => {
   const queryClient = useQueryClient();
   const mutation = useMutation({
@@ -59,6 +53,7 @@ const Confirmination = ({ meetingData, setMeetingData }: {
         duration: "",
         attendees: [] as string[],
         selectedTime: "",
+        link: "",
       });
     } catch (error) {
       throw new Error(`Error scheduling meeting: ${error}`);
@@ -138,6 +133,13 @@ const Confirmination = ({ meetingData, setMeetingData }: {
         </label>
         <input
           type="text"
+          value={meetingData.link}
+          onChange={(e) =>
+            setMeetingData((prev) => ({
+              ...prev,
+              link: e.target.value,
+            }))
+          }
           placeholder="Add link for your meeting"
           className="w-full border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-purple-500"
         />
