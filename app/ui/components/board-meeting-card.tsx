@@ -9,6 +9,7 @@ import { IconUserMeeting } from "../svg/icon-user-meeting";
 import { IconDelete } from "../svg/icon-delete";
 import { IconTeam } from "../svg/icon-team";
 import EditButtonWithModal from "../components/EditButtonWithModal";
+import { useMeetingDetailsModalStore } from "@/app/store/use-meetingDetails-store";
 
 interface BoardMeetingCardProps {
   meeting: Meeting;
@@ -19,13 +20,16 @@ export const BoardMeetingCard: React.FC<BoardMeetingCardProps> = ({
 }) => {
   const { deleteMeeting, setSelectedMeetingId } = useMeetingsStore();
   const [showConfirmModal, setShowConfirmModal] = React.useState(false);
+  const { isModalOpen, toggleModal, setMeetId } = useMeetingDetailsModalStore();
 
   if (!meeting?.id) {
     return null;
   }
 
   const handleEdit = () => {
-    setSelectedMeetingId(meeting.id);
+    console.log(meeting.id);
+    setMeetId(meeting.id);
+    toggleModal();
   };
 
   const handleDeleteClick = () => {
@@ -76,7 +80,7 @@ export const BoardMeetingCard: React.FC<BoardMeetingCardProps> = ({
             onClick={handleEdit}
             className="p-1.5 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
           >
-            <EditButtonWithModal />
+            <EditButtonWithModal meeting={meeting} />
           </div>
           <button
             onClick={handleDeleteClick}
