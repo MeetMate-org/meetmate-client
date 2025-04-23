@@ -4,28 +4,28 @@ import { MeetingData } from "@/app/types/meeting-data";
 
 const Attendees = ({
   setCurrentStep,
-  updateMeetingData,
+  setMeetingData,
   meetingData,
 }: {
   setCurrentStep: React.Dispatch<
     React.SetStateAction<"basics" | "attendees" | "date" | "confirmination">
   >;
-  updateMeetingData: (data: string[]) => void;
+  setMeetingData: React.Dispatch<React.SetStateAction<MeetingData>>;
   meetingData: MeetingData;
 }) => {
-  const [attendees, setAttendees] = useState<string[]>([]);
   const [email, setEmail] = useState("");
 
   const addAttendee = () => {
     if (email) {
-      setAttendees((prev) => [...prev, email]);
       setEmail("");
-      updateMeetingData([...attendees, email]);      
+      setMeetingData((prev) => ({
+        ...prev,
+        attendees: [...prev.attendees, email],
+      }));
     }
   };
 
   const handleNext = () => {
-    updateMeetingData(attendees);
     setCurrentStep("date");
   };
 

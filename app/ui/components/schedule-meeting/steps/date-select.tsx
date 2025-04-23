@@ -5,25 +5,16 @@ import { MeetingData } from "@/app/types/meeting-data";
 const DateSelect = ({
   suggestedTimes,
   setCurrentStep,
-  updateMeetingData,
+  setMeetingData,
   meetingData
 }: {
   suggestedTimes: { [date: string]: string[] };
   setCurrentStep: React.Dispatch<
     React.SetStateAction<"basics" | "attendees" | "date" | "confirmination">
   >;
-  updateMeetingData: (data: string) => void;
+  setMeetingData: React.Dispatch<React.SetStateAction<MeetingData>>;
   meetingData: MeetingData
 }) => {
-  const [selectedTime, setSelectedTime] = useState<string | null>(null);
-
-  const handleNext = () => {
-    if (selectedTime) {
-      updateMeetingData(selectedTime);
-      setCurrentStep("confirmination");
-    }
-  };
-
   return (
     <div className="flex flex-col gap-6 px-4 md:px-8 h-full">
       <p className="text-gray-600 text-left w-full text-sm md:text-base">
@@ -55,8 +46,9 @@ const DateSelect = ({
                           : "bg-gray-100 text-gray-800"
                       }`}
                       onClick={() => {
-                        setSelectedTime(`${date} ${time}`);
-                        updateMeetingData(`${date} ${time}`);
+                        setMeetingData(
+                          (prev) => ({ ...prev, selectedTime: `${date} ${time}` })
+                        );
                       }}
                     >
                       {time}
@@ -87,7 +79,11 @@ const DateSelect = ({
         </div>
       )}
 
-      <NextStep step="confirmination" setCurrentStep={setCurrentStep} onClick={handleNext} />
+      <NextStep step="confirmination" setCurrentStep={setCurrentStep} onClick={() => {
+        if (meetingData.selectedTime) {
+          setCurrentStep("confirmination");
+        }
+      }} />
     </div>
   );
 };

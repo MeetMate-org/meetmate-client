@@ -4,24 +4,15 @@ import { useState } from "react";
 
 const Basics = ({
   setCurrentStep,
-  updateMeetingData,
+  setMeetingData,
   meetingData
 }: {
   setCurrentStep: React.Dispatch<
     React.SetStateAction<"basics" | "attendees" | "date" | "confirmination">
   >;
-  updateMeetingData: (data: { title: string; description: string; duration: string }) => void;
+  setMeetingData: React.Dispatch<React.SetStateAction<MeetingData>>;
   meetingData: MeetingData
 }) => {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [duration, setDuration] = useState("");
-
-  const handleNext = () => {
-    updateMeetingData({ title, description, duration });
-    setCurrentStep("attendees");
-  };
-
   return (
     <div className="w-full flex flex-col items-end">
       <div className="w-full mt-4">
@@ -32,8 +23,10 @@ const Basics = ({
           placeholder="Add title for your meeting"
           value={meetingData.title}
           onChange={(e) => {
-            setTitle(e.target.value);
-            updateMeetingData({ title: e.target.value, description, duration });
+            setMeetingData((prev) => ({
+              ...prev,
+              title: e.target.value,
+            }));
           }}
         />
       </div>
@@ -45,8 +38,10 @@ const Basics = ({
           placeholder="Add description for your meeting"
           value={meetingData.description}
           onChange={(e) => {
-            setDescription(e.target.value)
-            updateMeetingData({ title, description: e.target.value, duration });
+            setMeetingData((prev) => ({
+              ...prev,
+              description: e.target.value,
+            }));
           }}
         ></textarea>
       </div>
@@ -58,8 +53,10 @@ const Basics = ({
             className="w-full border border-colorGray rounded-md py-2 px-4 mt-2 focus:outline-none appearance-none"
             value={meetingData.duration}
             onChange={(e) => {
-              setDuration(e.target.value)
-              updateMeetingData({ title, description, duration: e.target.value });
+              setMeetingData((prev) => ({
+                ...prev,
+                duration: e.target.value,
+              }));
             }}
           >
             <option value="">Select duration</option>
@@ -69,8 +66,8 @@ const Basics = ({
           </select>
         </div>
       </div>
-
-      <NextStep step="attendees" setCurrentStep={setCurrentStep} onClick={handleNext} />
+  
+      <NextStep step="attendees" setCurrentStep={setCurrentStep} onClick={() => setCurrentStep("attendees")} />
     </div>
   );
 };

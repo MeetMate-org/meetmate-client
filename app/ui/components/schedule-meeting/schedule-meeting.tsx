@@ -25,18 +25,14 @@ const ScheduleMeeting = () => {
       <Basics
         setCurrentStep={setCurrentStep}
         meetingData={meetingData}
-        updateMeetingData={(data) =>
-          setMeetingData((prev) => ({ ...prev, ...data }))
-        }
+        setMeetingData={setMeetingData}
       />
     ),
     attendees: (
       <Attendees
         setCurrentStep={setCurrentStep}
         meetingData={meetingData}
-        updateMeetingData={(data) =>
-          setMeetingData((prev) => ({ ...prev, attendees: data }))
-        }
+        setMeetingData={setMeetingData}
       />
     ),
     date: (
@@ -49,9 +45,7 @@ const ScheduleMeeting = () => {
         }}
         setCurrentStep={setCurrentStep}
         meetingData={meetingData}
-        updateMeetingData={(data) =>
-          setMeetingData((prev) => ({ ...prev, selectedTime: data }))
-        }
+        setMeetingData={setMeetingData}
       />
     ),
     confirmination: <Confirmination meetingData={meetingData} setMeetingData={setMeetingData} />,
