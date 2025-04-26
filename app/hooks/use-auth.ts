@@ -1,8 +1,7 @@
-// src/hooks/useAuth.ts
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import { useAuthStore } from "../store/use-auth-store";
 import { AuthResponse, LoginResponse, User } from "../types/auth";
 import {
@@ -10,8 +9,8 @@ import {
   useSignup,
   useVerifyOtp,
   useResendOtp,
-  useGetUserProfile,
-  useUpdateProfile,
+  // useGetUserProfile,
+  // useUpdateProfile,
   useChangePassword,
   useRequestPasswordReset,
   useResetPassword,
@@ -25,11 +24,11 @@ export const useAuth = () => {
   const login        = useLogin();
   const signup       = useSignup();
   const verifyOtp    = useVerifyOtp();
-  const [token]      = useState(() => localStorage.getItem("token") || "");
+  // const [token]      = useState(() => localStorage.getItem("token") || "");
   const [userId]     = useState(() => localStorage.getItem("userId") || "");
   const resendOtp    = useResendOtp(userId);
-  const userProfile  = useGetUserProfile(token);
-  const updateProfile= useUpdateProfile();
+  // const userProfile  = useGetUserProfile(token);
+  // const updateProfile= useUpdateProfile();
   const changePassword = useChangePassword();
   const requestPasswordReset = useRequestPasswordReset();
   const resetPassword = useResetPassword();
@@ -59,7 +58,6 @@ export const useAuth = () => {
         role: user.username ?? "user",
         username: user.username,
       });
-
       router.push("/home");
       return { success: true };
     } catch {
@@ -74,6 +72,8 @@ export const useAuth = () => {
   const handleLogout = useCallback(() => {
     localStorage.removeItem("token");
     localStorage.removeItem("userId");
+    localStorage.removeItem("name");
+    localStorage.removeItem("email");
     setUser(null);
     router.push("/");
   }, [router, setUser]);
@@ -88,33 +88,6 @@ export const useAuth = () => {
     return true;
   }, [router]);
 
-  useEffect(() => {
-    (async () => {
-      const t = localStorage.getItem("token");
-      const id = localStorage.getItem("userId");
-      if (!t || !id) {
-        router.push("/auth/login");
-        return;
-      }
-
-      setLoading(true);
-      try {
-        const user: User = await fetchUserByIdApi(id, t);
-        setUser({
-          id,
-          email: user.email,
-          name: user.name,
-          username: user.username,
-        });
-      } catch {
-        setError("User data could not be loaded");
-        handleLogout();
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, [router, handleLogout, setUser, setError, setLoading]);
-
   return {
     handleLogin,
     handleLogout,
@@ -124,8 +97,8 @@ export const useAuth = () => {
     signup,
     verifyOtp,
     resendOtp,
-    userProfile,
-    updateProfile,
+    // userProfile,
+    // updateProfile,
     changePassword,
     requestPasswordReset,
     resetPassword,

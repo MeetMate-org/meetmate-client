@@ -3,6 +3,7 @@ import featureImg1 from "@/public/images/meetmate5.jpg";
 import featureImg2 from "@/public/images/meetmate4.jpg";
 import featureImg3 from "@/public/images/meetmate3.jpg";
 import featureImg4 from "@/public/images/meetmate2.jpg";
+import { IconArrow } from "../../svg/icon-arrow";
 
 export const KeyFeaturesSection: React.FC = () => {
   const features = [
@@ -94,19 +95,11 @@ export const KeyFeaturesSection: React.FC = () => {
                   className="mt-4 inline-flex items-center text-indigo-600 font-semibold hover:underline"
                 >
                   Learn more
-                  <svg
-                    className="w-4 h-4 ml-1"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M17 8l4 4m0 0l-4 4m4-4H3"
-                    />
-                  </svg>
+                  <IconArrow
+                    direction="down"
+                    className="w-4 h-4 -rotate-90"
+                    strokeWidth={3}
+                  />
                 </button>
               </div>
             </div>

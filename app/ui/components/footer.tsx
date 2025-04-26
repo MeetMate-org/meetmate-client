@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import { IconArrow } from "../svg/icon-arrow";
 
 export const Footer: React.FC = () => (
   <footer className="bg-[#0B1A4A] text-white">
@@ -90,19 +91,11 @@ export const Footer: React.FC = () => (
           className="inline-flex items-center px-5 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg text-white text-sm"
         >
           Schedule Now
-          <svg
-            className="w-4 h-4 ml-2"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M17 8l4 4m0 0l-4 4m4-4H3"
-            />
-          </svg>
+          <IconArrow
+            direction="down"
+            className="w-4 h-4 -rotate-90"
+            strokeWidth={3}
+          />
         </button>
       </div>
     </div>

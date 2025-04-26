@@ -47,7 +47,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ children }) => {
       >
         <div className="p-4 h-full flex flex-col">
           <div className="flex items-center mb-6 w-full justify-center">
-            <IconLogo color="#ffffff" />
+            <Link href="/home">
+              <IconLogo color="#ffffff" />
+            </Link>
           </div>
 
           <nav className="flex flex-col space-y-2 mb-8">

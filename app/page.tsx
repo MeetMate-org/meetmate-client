@@ -34,6 +34,7 @@ export default function HomePage() {
         name: userData.name,
         username: userData.username,
       });
+
       setShowAuth(false);
     } else {
       setShowAuth(true);
