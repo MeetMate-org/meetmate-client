@@ -39,7 +39,7 @@ const Header = () => {
 
   return (
     <header>
-      <section className="flex justify-between items-center p-3.5 border-b-4 border-gray-300">
+      <section className="flex justify-between items-center p-3.5 border-b-2 border-gray-300">
         <div onClick={handleToggleSidebar} className="flex items-center space-x-2 cursor-pointer">
           <IconLogo color={colorPrimary} />
         </div>

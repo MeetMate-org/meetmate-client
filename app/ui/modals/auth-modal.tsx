@@ -189,7 +189,7 @@ export const AuthModal = () => {
                     if (apiResponse.name) localStorage.setItem("name", apiResponse.name);
 
                     handleClose();
-                    router.push("/home/board");
+                    router.push("/home/");
                   } else {
                     console.error("Invalid response format:", response);
                   }
@@ -262,7 +262,7 @@ export const AuthModal = () => {
                     if (response.token) {
                       handleClose();
                       localStorage.setItem("token", response.token);
-                      router.push("/home/board");
+                      router.push("/home/");
                     } else {
                       switchToResetPassword();
                     }
