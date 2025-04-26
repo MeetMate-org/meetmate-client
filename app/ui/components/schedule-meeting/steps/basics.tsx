@@ -1,6 +1,5 @@
 import { MeetingData } from "@/app/types/meeting-data";
 import NextStep from "../next-step";
-import { useState } from "react";
 
 const Basics = ({
   setCurrentStep,

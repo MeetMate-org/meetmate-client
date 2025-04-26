@@ -1,8 +1,8 @@
-import { createMeeting } from "@/app/services/create-meeting";
 import { MeetingData } from "@/app/types/meeting-data";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { parseISO, format } from "date-fns";
 import { useScheduleModalStore } from "@/app/store/use-schedule-store";
+import { createMeeting } from "@/app/services/api/meetingsApi";
 
 const Confirmination = ({ meetingData, setMeetingData }: { 
   meetingData: MeetingData,
@@ -38,7 +38,7 @@ const Confirmination = ({ meetingData, setMeetingData }: {
     selectedDate = parseISO(meetingData.selectedTime);
     isValidDate = !isNaN(selectedDate.getTime());
   } catch (error) {
-    console.error("Invalid date format:", meetingData.selectedTime);
+    console.error("Invalid date format:", meetingData.selectedTime, error);
   }
 
   const handleScheduleMeeting = async () => {

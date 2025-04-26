@@ -13,7 +13,7 @@ import {
   useVerifyOtp, 
   useResendOtp, 
   useResetPassword 
-} from "@/app/api/auth";
+} from "@/app/services/auth-services";
 import { Modal } from "./modal";
 import { useAuthStore } from "@/app/store/use-auth-store";
 

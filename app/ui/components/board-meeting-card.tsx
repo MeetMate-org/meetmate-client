@@ -7,7 +7,6 @@ import { IconClock } from "../svg/icon-clock";
 import { IconCalender } from "../svg/icon-calendar";
 import { IconUserMeeting } from "../svg/icon-user-meeting";
 import { IconDelete } from "../svg/icon-delete";
-import { IconTeam } from "../svg/icon-team";
 
 interface BoardMeetingCardProps {
   meeting: Meeting;

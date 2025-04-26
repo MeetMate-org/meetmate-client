@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import NextStep from "../next-step";
 import { MeetingData } from "@/app/types/meeting-data";
 
