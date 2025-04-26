@@ -1,84 +1,76 @@
+// src/hooks/useAuth.ts
 "use client";
 
-import { useRouter } from 'next/navigation';
-import { useEffect, useCallback, useState } from 'react';
-import { useAuthStore } from '../store/use-auth-store';
-import { AuthResponse, LoginResponse, User } from '../types/auth';
-import { useLogin } from '../api/auth';
-import { QueryClient } from '@tanstack/react-query';
+import { useRouter } from "next/navigation";
+import { useEffect, useCallback, useState } from "react";
+import { useAuthStore } from "../store/use-auth-store";
+import { AuthResponse, LoginResponse, User } from "../types/auth";
+import {
+  useLogin,
+  useSignup,
+  useVerifyOtp,
+  useResendOtp,
+  useGetUserProfile,
+  useUpdateProfile,
+  useChangePassword,
+  useRequestPasswordReset,
+  useResetPassword,
+} from  "../services/auth-services";    
+import { fetchUserByIdApi } from "../services/api/authApi"; 
 
 export const useAuth = () => {
   const router = useRouter();
   const { setUser, setError, setLoading } = useAuthStore();
-  const [queryClient] = useState(() => new QueryClient());
-  
-  const loginMutation = useLogin();
-  
-  const handleLogin = async (identifier: string, password: string): Promise<{ success: boolean; error?: string }> => {
+
+  const login        = useLogin();
+  const signup       = useSignup();
+  const verifyOtp    = useVerifyOtp();
+  const [token]      = useState(() => localStorage.getItem("token") || "");
+  const [userId]     = useState(() => localStorage.getItem("userId") || "");
+  const resendOtp    = useResendOtp(userId);
+  const userProfile  = useGetUserProfile(token);
+  const updateProfile= useUpdateProfile();
+  const changePassword = useChangePassword();
+  const requestPasswordReset = useRequestPasswordReset();
+  const resetPassword = useResetPassword();
+
+  const handleLogin = async (
+    identifier: string,
+    password: string
+  ): Promise<{ success: boolean; error?: string }> => {
     setLoading(true);
     try {
-      const loginResponse: LoginResponse = await loginMutation.mutateAsync({ identifier, password });
-  
-      if (!loginResponse.success || loginResponse.error) {
-        const errorMessage = loginResponse.error || "Невідома помилка під час авторизації";
-        setError(errorMessage);
-        return { success: false, error: errorMessage };
+      const res: LoginResponse = await login.mutateAsync({ identifier, password });
+      if (!res.success || res.error) {
+        const msg = res.error ?? "Невідома помилка під час авторизації";
+        setError(msg);
+        return { success: false, error: msg };
       }
-  
-      // Авторизація пройшла успішно, зберігаємо дані в localStorage
-      const authData: AuthResponse = loginResponse as unknown as AuthResponse;
+
+      const authData = res as unknown as AuthResponse;
       localStorage.setItem("token", authData.token);
       localStorage.setItem("userId", authData.userId);
-  
-      // Далі виконуватиметься запит для отримання даних користувача, якщо це потрібно
-      const userData = await queryClient.fetchQuery<User>({
-        queryKey: ['user', authData.userId],
-        queryFn: async () => {
-          const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-          if (!apiUrl) {
-            throw new Error("API URL is not defined!");
-          }
-  
-          const response = await fetch(`${apiUrl}/user/${authData.userId}`, {
-            headers: {
-              'x-access-token': authData.token,
-            },
-          });
-  
-          if (!response.ok) {
-            throw new Error("Cannot get user data");
-          }
-  
-          return response.json();
-        }
+
+      const user: User = await fetchUserByIdApi(authData.userId, authData.token);
+      setUser({
+        id: authData.userId,
+        email: user.email,
+        name: user.name,
+        role: user.username ?? "user",
+        username: user.username,
       });
-  
-      if (userData) {
-        // Зберігаємо дані користувача в стані
-        setUser({
-          id: authData.userId,
-          email: userData.email || '',
-          name: userData.name || '',
-          role: userData.username || 'user',
-        });
-        router.push("/home");
-        return { success: true };
-      } else {
-        const errorMessage = "The user was not found. Please try again.";
-        setError(errorMessage);
-        return { success: false, error: errorMessage };
-      }
-  
+
+      router.push("/home");
+      return { success: true };
     } catch {
-      const errorMessage = "Invalid credentials. Please try again.";
-      setError(errorMessage);
-      return { success: false, error: errorMessage };
+      const msg = "Invalid credentials. Please try again.";
+      setError(msg);
+      return { success: false, error: msg };
     } finally {
       setLoading(false);
     }
   };
-  
-  
+
   const handleLogout = useCallback(() => {
     localStorage.removeItem("token");
     localStorage.removeItem("userId");
@@ -86,78 +78,56 @@ export const useAuth = () => {
     router.push("/");
   }, [router, setUser]);
 
-  const checkAuth = async () => {
-    const token = localStorage.getItem("token");
-    const userId = localStorage.getItem("userId");
-
-    if (!token || !userId) {
+  const checkAuth = useCallback(async (): Promise<boolean> => {
+    const t = localStorage.getItem("token");
+    const id = localStorage.getItem("userId");
+    if (!t || !id) {
       router.push("/");
       return false;
     }
-
     return true;
-  };
+  }, [router]);
 
   useEffect(() => {
-    const initAuth = async () => {
-      const token = localStorage.getItem("token");
-      const userId = localStorage.getItem("userId");
-
-      if (!token || !userId) {
+    (async () => {
+      const t = localStorage.getItem("token");
+      const id = localStorage.getItem("userId");
+      if (!t || !id) {
         router.push("/auth/login");
         return;
       }
 
       setLoading(true);
       try {
-        const userData = await queryClient.fetchQuery<User>({
-          queryKey: ['user', userId],
-          queryFn: async () => {
-            const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-            if (!apiUrl) {
-              throw new Error("API URL is not defined!");
-            }
-            
-            const response = await fetch(`${apiUrl}/user/${userId}`, {
-              headers: {
-                'x-access-token': token,
-              }
-            });
-            
-            if (!response.ok) {
-              throw new Error("Unable to retrieve user data");
-            }
-            
-            return response.json();
-          }
+        const user: User = await fetchUserByIdApi(id, t);
+        setUser({
+          id,
+          email: user.email,
+          name: user.name,
+          username: user.username,
         });
-        
-        if (userData) {
-          setUser({
-            id: userId,
-            email: userData.email || '',
-            name: userData.name || '',
-            role: userData.username || 'user' 
-          });
-        } else {
-          setError("User not found.");
-          handleLogout();
-        }
-      } catch (error) {
-        console.error("Error fetching user:", error);
-        setError("User data could not be loaded.");
+      } catch {
+        setError("User data could not be loaded");
         handleLogout();
       } finally {
         setLoading(false);
       }
-    };
-
-    initAuth();
-  }, [router, handleLogout, setUser, setError, setLoading, queryClient]);
+    })();
+  }, [router, handleLogout, setUser, setError, setLoading]);
 
   return {
     handleLogin,
     handleLogout,
-    checkAuth
+    checkAuth,
+
+    login,
+    signup,
+    verifyOtp,
+    resendOtp,
+    userProfile,
+    updateProfile,
+    changePassword,
+    requestPasswordReset,
+    resetPassword,
   };
 };

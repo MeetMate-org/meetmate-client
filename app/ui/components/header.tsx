@@ -8,8 +8,8 @@ import { IconBurger } from "../svg/icon-burger";
 import { useModalStore } from '@/app/store/use-modal-store';
 import { useAuthStore } from '@/app/store/use-auth-store';
 import { colorPrimary } from "@/utils/utils";
-import { UserInfoModal } from "./user-info-modal";
-import { AuthOptionsModal } from "./auth-options-modal";
+import { UserInfoModal } from "../modals/user-info-modal";
+import { AuthOptionsModal } from "../modals/auth-options-modal";
 import { useSidebarStore } from "@/app/store/use-sidebar-store";
 
 const Header = () => {

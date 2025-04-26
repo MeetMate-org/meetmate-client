@@ -59,6 +59,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ children }) => {
               <IconCalender color={iconColor("/meetings")} />
               <span>My meetings</span>
             </Link>
+            <Link href="/calendar" className={linkClasses("/calendar")}>
+              <IconCalender color={iconColor("/calendar")} />
+              <span>My calendar</span>
+            </Link>
             <Link href="/voting" className={linkClasses("/voting")}>
               <IconLetter color={iconColor("/voting")} />
               <span>Voting</span>

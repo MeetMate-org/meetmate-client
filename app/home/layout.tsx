@@ -1,74 +1,69 @@
 "use client";
 
-import React, { useEffect, useCallback, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "../store/use-auth-store";
 import Header from "../ui/components/header";
 import { Tabs } from "../ui/components/tabs";
 import { GreetingsBox } from "../ui/components/greetings-box";
-import { QueryClient } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useGetUserById } from "../services/auth-services";
+
+const queryClient = new QueryClient();
 
 export default function HomeLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <InnerHomeLayout>{children}</InnerHomeLayout>
+    </QueryClientProvider>
+  );
+}
+
+function InnerHomeLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const router = useRouter();
   const { setUser } = useAuthStore();
-  const [queryClient] = useState(() => new QueryClient());
 
-  const initAuth = useCallback(async () => {
-    const token = localStorage.getItem("token");
-    const userId = localStorage.getItem("userId");
+  const [token] = useState(() => localStorage.getItem("token"));
+  const [userId] = useState(() => localStorage.getItem("userId"));
 
+  const {
+    data: userData,
+    isLoading,
+    isError,
+  } = useGetUserById(token ?? "", userId ?? "");
+
+  useEffect(() => {
     if (!token || !userId) {
       router.push("/");
       return;
     }
 
-    try {
-      const userData = await queryClient.fetchQuery({
-        queryKey: ['user', userId],
-        queryFn: async () => {
-          const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-          if (!apiUrl) {
-            throw new Error("API URL is not defined!");
-          }
-          
-          const response = await fetch(`${apiUrl}/user/${userId}`, {
-            headers: {
-              'x-access-token': token
-            }
-          });
-          
-          if (!response.ok) {
-            throw new Error("Не вдалося отримати дані користувача");
-          }
-          
-          return response.json();
-        }
-      });
-
-      if (userData?.username) {
-        setUser({
-          id: userId,
-          email: userData.email || userData.username,
-          name: userData.name || userData.username,
-          role: userData.role || "user",
-        });
-      } else {
-        console.error("Invalid user data:", userData);
-        router.push("/");
-      }
-    } catch (error) {
-      console.error("Error loading user data:", error);
+    if (isError) {
       router.push("/");
+      return;
     }
-  }, [router, setUser, queryClient]);
 
-  useEffect(() => {
-    initAuth();
-  }, [initAuth]);
+    if (userData) {
+      setUser({
+        id: userId,
+        email: userData.email,
+        name: userData.name,
+        username: userData.username,
+      });
+    }
+  }, [token, userId, userData, isError, router, setUser]);
+
+  if (isLoading || !userData) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -77,9 +72,7 @@ export default function HomeLayout({
 
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 px-6 py-8">
           <GreetingsBox />
-          <Tabs>
-            {children}
-          </Tabs>
+          <Tabs>{children}</Tabs>
         </main>
       </div>
     </div>
