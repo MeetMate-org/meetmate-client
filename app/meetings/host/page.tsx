@@ -1,10 +1,35 @@
 "use client";
 
+import { useFetchMeetings } from "@/app/hooks/use-get-meetings";
 import { useMeetingsStore } from "@/app/store/use-meetings-store";
 import { BoardMeetingCard } from "@/app/ui/components/board-meeting-card";
+import { useEffect } from "react";
 
 export default function BoardRoute() {
-  const meetings = useMeetingsStore((state) => state.meetings);
+  const { meetings, setMeetings } = useMeetingsStore();
+  const { data: fetchedMeetings, isLoading, isError, error } = useFetchMeetings();
+
+  useEffect(() => {
+    if (fetchedMeetings) {
+      setMeetings(fetchedMeetings); 
+    }
+  }, [fetchedMeetings, setMeetings]);
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-6 py-8">
+        <p className="text-gray-500">Loading...</p>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="container mx-auto px-6 py-8">
+        <p className="text-red-500">Error: {error.message}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-6 py-8">
