@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useAuthStore } from '@/app/store/use-auth-store';
-import { useUpdateProfile } from '@/app/api/auth';
+import { useUpdateProfile } from '@/app/services/auth-services';
 
 interface ProfileFormProps {
   onSuccess?: () => void;

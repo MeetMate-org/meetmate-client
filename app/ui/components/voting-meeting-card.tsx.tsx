@@ -24,20 +24,20 @@ export const MeetingVoteCard: React.FC<VotingCardProps> = ({ meeting }) => {
 
   if (!meeting?._id || !Array.isArray(meeting.votingOptions)) return null;
 
-  const formatDeadline = (dateString: string) => {
-    try {
-      const date = new Date(dateString);
-      return isNaN(date.getTime())
-        ? dateString
-        : date.toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-          });
-    } catch {
-      return dateString;
-    }
-  };
+  // const formatDeadline = (dateString: string) => {
+  //   try {
+  //     const date = new Date(dateString);
+  //     return isNaN(date.getTime())
+  //       ? dateString
+  //       : date.toLocaleDateString("en-US", {
+  //           month: "short",
+  //           day: "numeric",
+  //           year: "numeric",
+  //         });
+  //   } catch {
+  //     return dateString;
+  //   }
+  // };
 
   const totalVotes = meeting.votingOptions.reduce(
     (sum, option) => sum + option.votes,

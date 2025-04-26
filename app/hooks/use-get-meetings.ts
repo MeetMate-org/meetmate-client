@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { getMeetingsByUserId } from "../services/get-meetings";
+import { getMeetingsByUserId } from "../services/api/meetingsApi";
 
 export const useFetchMeetings = () => {
   const id = localStorage.getItem("userId");
