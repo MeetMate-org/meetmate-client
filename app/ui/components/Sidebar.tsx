@@ -47,21 +47,23 @@ export const Sidebar: React.FC<SidebarProps> = ({ children }) => {
       >
         <div className="p-4 h-full flex flex-col">
           <div className="flex items-center mb-6 w-full justify-center">
-            <IconLogo color="#ffffff" />
+            <Link href="/home">
+              <IconLogo color="#ffffff" />
+            </Link>
           </div>
 
           <nav className="flex flex-col space-y-2 mb-8">
-            <Link href="/" className={linkClasses("/home")}>
+            <Link href="/home" className={linkClasses("/home")}>
               <IconHome color={iconColor("/home")} />
               <span>Home</span>
-            </Link>
-            <Link href="/meetings" className={linkClasses("/meetings")}>
-              <IconCalender color={iconColor("/meetings")} />
-              <span>My meetings</span>
             </Link>
             <Link href="/calendar" className={linkClasses("/calendar")}>
               <IconCalender color={iconColor("/calendar")} />
               <span>My calendar</span>
+            </Link>
+            <Link href="/meetings" className={linkClasses("/meetings")}>
+              <IconCalender color={iconColor("/meetings")} />
+              <span>My meetings</span>
             </Link>
             <Link href="/voting" className={linkClasses("/voting")}>
               <IconLetter color={iconColor("/voting")} />
@@ -69,7 +71,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ children }) => {
             </Link>
           </nav>
 
-          <button onClick={() => {toggleScheduleModal(); toggleSidebar()}} className="w-full border border-white text-white rounded-md px-3 py-2 mb-2 hover:bg-colorPrimary">
+          <button
+            onClick={() => {
+              toggleScheduleModal();
+              toggleSidebar();
+            }}
+            className="w-full border border-white text-white rounded-md px-3 py-2 mb-2 hover:bg-colorPrimary"
+          >
             + Meeting
           </button>
         </div>

@@ -5,7 +5,7 @@ import {
   User,
   OtpVerifyResponse,
   ResetPasswordResponse,
-  UpdateProfileResponse,
+  // UpdateProfileResponse,
 } from "../../types/auth";
 
 const base = process.env.NEXT_PUBLIC_API_URL;
@@ -67,15 +67,16 @@ export const getUserProfileApi = (token: string): Promise<User> =>
     .then(r => r.data);
 
 /** PUT /user/profile */
-export const updateProfileApi = (
-  token: string,
-  profileData: Partial<User>
-): Promise<UpdateProfileResponse> =>
-  axios
-    .put<UpdateProfileResponse>(`${base}/user/profile`, profileData, {
-      headers: { "x-access-token": token },
-    })
-    .then(r => r.data);
+// BE - API does not support partial updates
+// export const updateProfileApi = (
+//   token: string,
+//   profileData: Partial<User>
+// ): Promise<UpdateProfileResponse> =>
+//   axios
+//     .put<UpdateProfileResponse>(`${base}/user/profile`, profileData, {
+//       headers: { "x-access-token": token },
+//     })
+//     .then(r => r.data);
 
 /** POST /user/change-password */
 export const changePasswordApi = (
