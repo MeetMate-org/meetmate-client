@@ -5,6 +5,7 @@ import {
   User,
   OtpVerifyResponse,
   ResetPasswordResponse,
+  UserProfile,
   // UpdateProfileResponse,
 } from "../../types/auth";
 
@@ -32,6 +33,28 @@ export const signupApi = (userData: {
 export const fetchUserByIdApi = (id: string): Promise<User> =>
   axios
     .get<User>(`${base}/user/${id}`)
+    .then(r => r.data);
+
+/** GET /user/account/ */
+export const fetchUserAccountApi = (token: string, userId: string): Promise<UserProfile> =>
+  axios
+    .get<UserProfile>(`${base}/user/account/${userId}`, {
+      headers: { "x-access-token": token },
+    })
+    .then(r => r.data);
+
+/** PUT /user/edit/:userId */
+export const editUserApi = (
+  token: string,
+  userId: string,
+  userData: Partial<UserProfile>
+): Promise<{ success: boolean; message: string }> =>
+  axios
+    .put<{ success: boolean; message: string }>(
+      `${base}/user/edit/${userId}`,
+      userData,
+      { headers: { "x-access-token": token } }
+    )
     .then(r => r.data);
 
 /** POST /user/verify-otp */
