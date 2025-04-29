@@ -32,11 +32,11 @@ export const useSignup = () =>
     onError: e => console.error("Signup error:", e),
   });
 
-export const useGetUserById = (token: string, id: string) =>
+export const useGetUserById = (id: string) =>
   useQuery({
     queryKey: ["user", id],
-    queryFn: () => fetchUserByIdApi(id, token),
-    enabled: Boolean(token && id)
+    queryFn: () => fetchUserByIdApi(id),
+    enabled: Boolean(id)
   });
 
 export const useVerifyOtp = () =>

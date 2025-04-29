@@ -29,11 +29,9 @@ export const signupApi = (userData: {
   axios.post<AuthResponse>(`${base}/user/signup`, userData).then(r => r.data);
 
 /** GET /user/:id */
-export const fetchUserByIdApi = (id: string, token: string): Promise<User> =>
+export const fetchUserByIdApi = (id: string): Promise<User> =>
   axios
-    .get<User>(`${base}/user/${id}`, {
-      headers: { "x-access-token": token },
-    })
+    .get<User>(`${base}/user/${id}`)
     .then(r => r.data);
 
 /** POST /user/verify-otp */

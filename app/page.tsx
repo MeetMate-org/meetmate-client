@@ -27,7 +27,7 @@ export default function HomePage() {
     data: userData,
     isLoading,
     isError,
-  } = useGetUserById(token ?? "", userId ?? "");
+  } = useGetUserById(userId ?? "");
 
   useEffect(() => {
     if (isLoading) return;
