@@ -1,9 +1,15 @@
 export interface User {
   id: string;
   email: string;
-  name: string;
   username: string;
   role?: string;
+}
+
+export interface UserProfile {
+  _id: string;
+  email: string;
+  username: string;
+  createdAt: string;
 }
 
 export interface LoginResponse {

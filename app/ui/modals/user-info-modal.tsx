@@ -5,6 +5,7 @@ import { useAuthStore } from "@/app/store/use-auth-store";
 import { useModalStore } from "@/app/store/use-modal-store";
 import { useAuth } from "@/app/hooks/use-auth";
 import { ProfileModal } from "../modals/profile-modal";
+import { useEditProfileModalStore } from "@/app/store/use-edit-profile-store";
 
 interface UserInfoModalProps {
   isOpen: boolean;
@@ -17,6 +18,7 @@ export const UserInfoModal: React.FC<UserInfoModalProps> = ({ isOpen, buttonRef 
   const modalRef = useRef<HTMLDivElement>(null);
   const { toggleModal } = useModalStore();
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const { openEditProfileModal } = useEditProfileModalStore();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -56,10 +58,10 @@ export const UserInfoModal: React.FC<UserInfoModalProps> = ({ isOpen, buttonRef 
     toggleModal();
   };
 
-  // const handleEditProfile = () => {
-  //   setIsProfileModalOpen(true);
-  //   toggleModal();
-  // };
+  const handleEditProfile = () => {
+    openEditProfileModal();
+    toggleModal();
+  };
 
   return (
     <>
@@ -82,23 +84,22 @@ export const UserInfoModal: React.FC<UserInfoModalProps> = ({ isOpen, buttonRef 
           
           <div className="space-y-3">
             <button
-              // onClick={handleEditProfile}
-              disabled={true}
-              className="w-full px-3 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+              onClick={handleEditProfile}
+              className="w-full px-3 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors cursor-pointer"
             >
               Edit Profile
             </button>
             
             <button
               onClick={handleUserLogout}
-              className="w-full px-3 py-2 text-sm bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+              className="w-full px-3 py-2 text-sm bg-red-600 text-white rounded hover:bg-red-700 transition-colors cursor-pointer"
             >
               Logout
             </button>
             
             <button
               onClick={toggleModal}
-              className="w-full px-3 py-2 text-sm bg-colorPrimary text-white rounded hover:opacity-[.7] transition-colors"
+              className="w-full px-3 py-2 text-sm bg-colorPrimary text-white rounded hover:opacity-[.7] transition-colors cursor-pointer"
             >
               Close
             </button>

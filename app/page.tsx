@@ -35,7 +35,6 @@ export default function HomePage() {
       setUser({
         id: userId!,
         email: userData.email,
-        name: userData.name,
         username: userData.username,
       });
 

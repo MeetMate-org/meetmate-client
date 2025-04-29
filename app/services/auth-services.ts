@@ -10,6 +10,7 @@ import {
   changePasswordApi,
   requestPasswordResetApi,
   resetPasswordApi,
+  editUserApi,
 } from "./api/authApi";
 import {
   AuthResponse,
@@ -19,6 +20,7 @@ import {
   ResetPasswordResponse,
   // UpdateProfileResponse,
 } from "../types/auth";
+import { fetchUserAccountApi } from "./api/authApi";
 
 export const useLogin = () =>
   useMutation<LoginResponse, Error, { identifier: string; password: string }>({
@@ -37,6 +39,20 @@ export const useGetUserById = (id: string) =>
     queryKey: ["user", id],
     queryFn: () => fetchUserByIdApi(id),
     enabled: Boolean(id)
+  });
+
+
+export const useGetAccount = (id: string, token: string) => 
+  useQuery({
+    queryKey: ["user"],
+    queryFn: () => fetchUserAccountApi(token, id),
+    enabled: Boolean(token),
+  });
+
+export const useEditUser = (token: string, userId: string) =>
+  useMutation<{ success: boolean; message: string }, Error, Partial<{ username: string; email: string }>>({
+    mutationFn: userData => editUserApi(token, userId, userData),
+    onError: e => console.error("Edit user error:", e),
   });
 
 export const useVerifyOtp = () =>
