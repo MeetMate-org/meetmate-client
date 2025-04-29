@@ -1,7 +1,6 @@
 "use client";
 
 import { useEditUser, useGetAccount } from "@/app/services/auth-services";
-import { User } from "@/app/types/user"; // Ensure this path points to the correct location of the User type
 import { useAuthStore } from "@/app/store/use-auth-store";
 import { useEditProfileModalStore } from "@/app/store/use-edit-profile-store";
 import { useQueryClient } from "@tanstack/react-query";
@@ -10,9 +9,11 @@ import { useEffect, useState } from "react";
 const EditProfile = () => {
   const token = localStorage.getItem("token") || "";
   const userId = localStorage.getItem("userId") || "";
-  if (!token && !userId) {
+
+  if (!token || !userId) {
     return <div>Please log in to edit your profile.</div>;
   }
+
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
 
@@ -23,6 +24,13 @@ const EditProfile = () => {
   const queryClient = useQueryClient();
 
   const isMutating = status === "pending";
+
+  useEffect(() => {
+    if (account) {
+      setUsername(account.username);
+      setEmail(account.email);
+    }
+  }, [account]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -36,11 +44,6 @@ const EditProfile = () => {
     return <div>No account information found.</div>;
   }
 
-  useEffect(() => {
-    setUsername(account.username);
-    setEmail(account.email);
-  }, [account]);
-
   const handleEditUser = async (e: React.FormEvent) => {
     e.preventDefault();
     const updatedUser = {
@@ -51,7 +54,7 @@ const EditProfile = () => {
     mutate(updatedUser, {
       onSuccess: (data) => {
         console.log("Profile updated successfully:", data);
-        queryClient.invalidateQueries({ queryKey: ["user"] }); 
+        queryClient.invalidateQueries({ queryKey: ["user"] });
         setUser({
           id: userId,
           email: updatedUser.email,
@@ -66,7 +69,7 @@ const EditProfile = () => {
   };
 
   return (
-    <div className="p-4 w-[70%] min-h-[90vh] fixed top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 mx-auto bg-white rounded-lg shadow-xl"> 
+    <div className="p-4 w-[70%] min-h-[90vh] fixed top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 mx-auto bg-white rounded-lg shadow-xl">
       <h1 className="text-2xl font-bold mb-4">Edit Profile</h1>
       <form onSubmit={handleEditUser}>
         <div className="mb-4">
@@ -101,7 +104,7 @@ const EditProfile = () => {
         <h2 className="text-lg font-semibold">Account Information</h2>
         <p className="text-gray-700">Created at: {new Date(account.createdAt).toLocaleDateString()}</p>
       </div>
-    </div>    
+    </div>
   );
 };
 
