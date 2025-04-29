@@ -1,22 +1,45 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import React, { useEffect } from "react";
+import { useMeetingsStore } from "@/app/store/use-meetings-store";
+import { MeetingVoteCard } from "@/app/ui/components/voting-meeting-card.tsx";
+import { useEffect } from "react";
+import { useFetchAttenddingMeetings } from "../hooks/use-get-meetings";
 
-const VotingPage = () => {
-  const router = useRouter();
+export default function VotingRoute() {
+  const { meetings, setMeetings } = useMeetingsStore();
+  const { data: fetchedMeetings, isLoading, isError, error } = useFetchAttenddingMeetings();
 
   useEffect(() => {
-    router.push("/voting/host");
-  }, [router]);
+    if (fetchedMeetings) {
+      setMeetings(fetchedMeetings); 
+    }
+  }, [fetchedMeetings, setMeetings]);
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-6 py-8">
+        <p className="text-gray-500">Loading...</p>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="container mx-auto px-6 py-8">
+        <p className="text-red-500">Error: {error.message}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-6 py-8">
-      <h1 className="text-2xl font-bold text-gray-800 text-center">
-        Vote for your preffered meeting times
-      </h1>
+      <div className="flex justify-center items-center">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
+          {meetings.map((meeting) => 
+            <MeetingVoteCard key={meeting._id} meeting={meeting} />
+          )}
+        </div>
+      </div>
     </div>
   );
-};
-
-export default VotingPage;
+}
