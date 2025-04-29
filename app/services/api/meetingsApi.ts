@@ -80,3 +80,20 @@ export const createMeeting = async (
     throw error; // Rethrow the error to be handled by the calling function
   }
 };
+
+export const getAllUserMeetings = async (userId: string, token: string) => {
+  try {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/meetings/user/all/${userId}`,
+      {
+        headers: {
+          "x-access-token": token,
+        },
+      }
+    );
+    return res.data;
+  } catch (error) {
+    console.error("Error fetching all user meetings:", error);
+    throw error; // Rethrow the error to be handled by the calling function
+  }
+}

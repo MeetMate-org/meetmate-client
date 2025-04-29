@@ -1,8 +1,22 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { DAYS, HOURS } from "@/utils/utils";
+import { DAYS } from "@/utils/utils";
 import { IconArrow } from "../svg/icon-arrow";
-import { useMeetingsStore } from "@/app/store/use-meetings-store";
+import { Meeting, useMeetingsStore } from "@/app/store/use-meetings-store";
+
+export const HOURS = [
+  "08:00 AM",
+  "09:00 AM",
+  "10:00 AM",
+  "11:00 AM",
+  "12:00 PM",
+  "01:00 PM",
+  "02:00 PM",
+  "03:00 PM",
+  "04:00 PM",
+  "05:00 PM",
+  "06:00 PM",
+];
 
 interface CalendarEvent {
   id: string;
@@ -13,10 +27,18 @@ interface CalendarEvent {
   color: string;
 }
 
-export default function WeekCalendar() {
+export default function WeekCalendar({
+  meetings,
+}: {
+  meetings: Meeting[];
+}) {
   const [isClient, setIsClient] = useState(false);
   const [currentWeek, setCurrentWeek] = useState<{ start: Date; end: Date }>();
-  const meetings = useMeetingsStore((state) => state.meetings);
+  const [days, setDays] = useState<{ label: string; date: string }[]>([]);
+
+  if (!meetings) {
+    return null;
+  }
 
   useEffect(() => {
     setIsClient(true);
@@ -28,6 +50,22 @@ export default function WeekCalendar() {
     endOfWeek.setDate(startOfWeek.getDate() + 6);
     setCurrentWeek({ start: startOfWeek, end: endOfWeek });
   }, []);
+
+  useEffect(() => {
+    if (currentWeek) {
+      const days = [];
+      const start = new Date(currentWeek.start);
+      for (let i = 0; i < 7; i++) {
+        const date = new Date(start);
+        date.setDate(start.getDate() + i);
+        days.push({
+          label: date.toLocaleDateString("en-US", { weekday: "short" }),
+          date: date.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+        });
+      }
+      setDays(days);
+    }
+  }, [currentWeek]);
 
   const handlePrev = () => {
     if (!currentWeek) return;
@@ -69,7 +107,6 @@ export default function WeekCalendar() {
     }
   
     try {
-      // Parse the ISO date string
       const date = new Date(dateStr);
   
       if (isNaN(date.getTime())) {
@@ -77,46 +114,54 @@ export default function WeekCalendar() {
         return { day: "Unknown", startTime: "Unknown", endTime: "Unknown" };
       }
   
-      // Extract day and time
       const day = date.toLocaleDateString("en-US", {
-        weekday: "short",
+        weekday: "short", // Збігається з форматом у days
         timeZone: "UTC",
       });
       const startTime = date.toLocaleTimeString("en-US", {
         hour: "2-digit",
         minute: "2-digit",
+        hour12: true,
         timeZone: "UTC",
       });
   
-      // Assuming the end time is provided separately, adjust this logic as needed
-      const endTime = "Unknown"; // Replace with actual logic if available
-  
-      return { day, startTime, endTime };
+      return { day, startTime };
     } catch (error) {
       console.error("Error parsing meeting date:", error);
       return { day: "Unknown", startTime: "Unknown", endTime: "Unknown" };
     }
   };
 
-  const calendarEvents: CalendarEvent[] = meetings.map((meeting) => {
-    const { day, startTime } = parseMeetingDate(meeting.startTime);
-    const endTime = meeting.endTime
-      ? new Date(meeting.endTime).toLocaleTimeString("en-US", {
-          hour: "2-digit",
-          minute: "2-digit",
-          timeZone: "UTC",
-        })
-      : "Unknown";
+  const calendarEvents: CalendarEvent[] = meetings
+    .filter((meeting) => {
+      if (!currentWeek) return false;
 
-    return {
-      id: meeting._id,
-      title: meeting.title,
-      day,
-      startTime,
-      endTime,
-      color: meeting.color || "#000000", // Default color if undefined
-    };
-  });
+      const meetingDate = new Date(meeting.startTime);
+      return (
+        meetingDate >= currentWeek.start &&
+        meetingDate <= currentWeek.end
+      );
+    })
+    .map((meeting) => {
+      const { day, startTime } = parseMeetingDate(meeting.startTime);
+      const endTime = meeting.endTime
+        ? new Date(meeting.endTime).toLocaleTimeString("en-US", {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+            timeZone: "UTC",
+          })
+        : "Unknown";
+
+      return {
+        id: meeting._id,
+        title: meeting.title,
+        day,
+        startTime,
+        endTime,
+        color: meeting.color || "#000000", // Default color if undefined
+      };
+    });
 
   if (!isClient) {
     return (
@@ -155,7 +200,7 @@ export default function WeekCalendar() {
           <thead>
             <tr className="bg-purple-50">
               <th className="p-2 border border-purple-100 w-16"></th>
-              {DAYS.map((day) => (
+              {days.map((day) => (
                 <th
                   key={day.label}
                   className="p-2 border border-purple-100 text-center w-36"
@@ -174,7 +219,7 @@ export default function WeekCalendar() {
                   {hour}
                 </td>
 
-                {DAYS.map((day) => {
+                {days.map((day) => {
                   const eventsInCell = calendarEvents.filter(
                     (ev) => ev.day === day.label && ev.startTime === hour
                   );
@@ -187,14 +232,18 @@ export default function WeekCalendar() {
                       {eventsInCell.map((ev) => (
                         <div
                           key={ev.id}
-                          className="text-sm rounded px-1 mb-1 truncate"
+                          className="text-sm rounded-lg px-2 py-1 mb-1 truncate shadow-md"
                           style={{
-                            backgroundColor: `${ev.color}20`,
-                            color: ev.color,
-                            border: `1px solid ${ev.color}40`,
+                            backgroundColor: `#34D399`, 
+                            color: ev.color, 
+                            border: `1px solid ${ev.color}80`, 
+                            boxShadow: `0 2px 4px ${ev.color}40`, 
                           }}
                         >
-                          {ev.title} ({ev.startTime}–{ev.endTime})
+                          <div className="font-semibold">{ev.title}</div>
+                          <div className="text-xs">
+                            {ev.startTime} – {ev.endTime}
+                          </div>
                         </div>
                       ))}
                     </td>

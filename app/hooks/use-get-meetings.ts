@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { getAttendingMeetings, getMeetingsByUserId } from "../services/api/meetingsApi";
+import { getAllUserMeetings, getAttendingMeetings, getMeetingsByUserId } from "../services/api/meetingsApi";
 
 export const useFetchMeetings = () => {
   const id = localStorage.getItem("userId");
@@ -42,6 +42,29 @@ export const useFetchAttenddingMeetings = () => {
       }
 
       return getAttendingMeetings(id, token);
+    },
+    enabled: !!id && !!token, 
+  });
+
+  return query;
+}
+
+export const useFetchAllUserMeetings = () => {
+  const id = localStorage.getItem("userId");
+  const token = localStorage.getItem("token");
+
+  const query = useQuery({
+    queryKey: ["allUserMeetings"],
+    queryFn: async () => {
+      if (!token) {
+        throw new Error("Token is missing");
+      }
+
+      if (!id) {
+        throw new Error("User ID is missing");
+      }
+
+      return getAllUserMeetings(id, token);
     },
     enabled: !!id && !!token, 
   });
