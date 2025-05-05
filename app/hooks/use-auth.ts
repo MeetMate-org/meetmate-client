@@ -71,7 +71,7 @@ export const useAuth = () => {
   const handleLogout = useCallback(() => {
     localStorage.removeItem("token");
     localStorage.removeItem("userId");
-    localStorage.removeItem("name");
+    localStorage.removeItem("username");
     localStorage.removeItem("email");
     setUser(null);
     router.push("/");

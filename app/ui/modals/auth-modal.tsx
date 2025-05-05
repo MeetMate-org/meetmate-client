@@ -164,7 +164,7 @@ export const AuthModal: React.FC = () => {
                     console.log("User data fetched:", userData);
                 
                     localStorage.setItem("email", userData.email);
-                    localStorage.setItem("name", userData.username);
+                    localStorage.setItem("username", userData.username);
                     setUser({
                       id: userId,
                       email: userData.email,
