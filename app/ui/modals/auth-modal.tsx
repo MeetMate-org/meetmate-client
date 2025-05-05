@@ -160,7 +160,7 @@ export const AuthModal: React.FC = () => {
                   localStorage.setItem("userId", userId);
                 
                   try {
-                    const userData = await fetchUserByIdApi(userId, token);
+                    const userData = await fetchUserByIdApi(userId);
                     console.log("User data fetched:", userData);
                 
                     localStorage.setItem("email", userData.email);
@@ -168,7 +168,6 @@ export const AuthModal: React.FC = () => {
                     setUser({
                       id: userId,
                       email: userData.email,
-                      name: userData.username,
                       role: userData.username,
                       username: userData.username,
                     });
