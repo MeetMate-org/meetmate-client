@@ -50,8 +50,8 @@ export const useFetchAttenddingMeetings = () => {
 }
 
 export const useFetchAllUserMeetings = () => {
-  const id = localStorage.getItem("userId");
-  const token = localStorage.getItem("token");
+  const id = typeof window !== "undefined" ? localStorage.getItem("userId") : null;
+  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
   const query = useQuery({
     queryKey: ["allUserMeetings"],
