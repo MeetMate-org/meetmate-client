@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { IconUserMeeting } from "../svg/icon-user-meeting";
 import { IconDeadline } from "../svg/icon-deadline";
 import { IconTeam } from "../svg/icon-team";
