@@ -50,11 +50,10 @@ export const useAuth = () => {
       localStorage.setItem("token", authData.token);
       localStorage.setItem("userId", authData.userId);
 
-      const user: User = await fetchUserByIdApi(authData.userId, authData.token);
+      const user: User = await fetchUserByIdApi(authData.userId);
       setUser({
         id: authData.userId,
         email: user.email,
-        name: user.name,
         role: user.username ?? "user",
         username: user.username,
       });
