@@ -78,8 +78,8 @@ export const useAuth = () => {
   }, [router, setUser]);
 
   const checkAuth = useCallback(async (): Promise<boolean> => {
-    const t = localStorage.getItem("token");
-    const id = localStorage.getItem("userId");
+    const id = typeof window !== "undefined" ? localStorage.getItem("userId") : null;
+    const t = typeof window !== "undefined" ? localStorage.getItem("token") : null;
     if (!t || !id) {
       router.push("/");
       return false;

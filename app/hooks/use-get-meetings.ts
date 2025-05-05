@@ -4,8 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { getAllUserMeetings, getAttendingMeetings, getMeetingsByUserId } from "../services/api/meetingsApi";
 
 export const useFetchMeetings = () => {
-  const id = localStorage.getItem("userId");
-  const token = localStorage.getItem("token");
+  const id = typeof window !== "undefined" ? localStorage.getItem("userId") : null;
+  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
   const query = useQuery({
     queryKey: ["meetings"],
@@ -27,8 +27,8 @@ export const useFetchMeetings = () => {
 };
 
 export const useFetchAttenddingMeetings = () => {
-  const id = localStorage.getItem("userId");
-  const token = localStorage.getItem("token");
+  const id = typeof window !== "undefined" ? localStorage.getItem("userId") : null;
+  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
   const query = useQuery({
     queryKey: ["attendingMeetings"],

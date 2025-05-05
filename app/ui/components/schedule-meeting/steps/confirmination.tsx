@@ -12,8 +12,8 @@ const Confirmination = ({ meetingData, setMeetingData }: {
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: (meetingData: MeetingData) => {
-      const id = localStorage.getItem("userId");
-      const token = localStorage.getItem("token");
+      const id = typeof window !== "undefined" ? localStorage.getItem("userId") : null;
+  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
       
       if (!token) {
         throw new Error("Token is missing");
