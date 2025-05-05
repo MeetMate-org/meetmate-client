@@ -19,7 +19,7 @@ export default function HomePage() {
       const username = localStorage.getItem("name");
 
       if (token && userId) {
-        setUser({ id: userId, name: name || "", email: email || "", username: username || "" });
+        setUser({ id: userId, email: email || "", username: username || "" });
         return;
       }
       router.replace("/");
