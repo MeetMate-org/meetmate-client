@@ -14,9 +14,8 @@ export default function HomePage() {
     if (!user) {
       const token = localStorage.getItem("token");
       const userId = localStorage.getItem("userId");
-      const name = localStorage.getItem("username");
       const email = localStorage.getItem("email");
-      const username = localStorage.getItem("name");
+      const username = localStorage.getItem("username");
 
       if (token && userId) {
         setUser({ id: userId, email: email || "", username: username || "" });
