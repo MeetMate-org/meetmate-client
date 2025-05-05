@@ -10,10 +10,6 @@ const EditProfile = () => {
   const token = localStorage.getItem("token") || "";
   const userId = localStorage.getItem("userId") || "";
 
-  if (!token || !userId) {
-    return <div>Please log in to edit your profile.</div>;
-  }
-
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
 
@@ -31,6 +27,11 @@ const EditProfile = () => {
       setEmail(account.email);
     }
   }, [account]);
+
+  // Handle cases where token or userId is missing
+  if (!token || !userId) {
+    return <div>Please log in to edit your profile.</div>;
+  }
 
   if (isLoading) {
     return <div>Loading...</div>;

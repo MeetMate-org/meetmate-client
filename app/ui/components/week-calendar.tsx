@@ -1,8 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { DAYS } from "@/utils/utils";
 import { IconArrow } from "../svg/icon-arrow";
-import { Meeting, useMeetingsStore } from "@/app/store/use-meetings-store";
+import { Meeting } from "@/app/store/use-meetings-store";
 
 export const HOURS = [
   "08:00 AM",
@@ -36,10 +35,6 @@ export default function WeekCalendar({
   const [currentWeek, setCurrentWeek] = useState<{ start: Date; end: Date }>();
   const [days, setDays] = useState<{ label: string; date: string }[]>([]);
 
-  if (!meetings) {
-    return null;
-  }
-
   useEffect(() => {
     setIsClient(true);
     // Initialize with current week
@@ -66,6 +61,10 @@ export default function WeekCalendar({
       setDays(days);
     }
   }, [currentWeek]);
+
+  if (!meetings) {
+    return null;
+  }
 
   const handlePrev = () => {
     if (!currentWeek) return;
@@ -105,17 +104,17 @@ export default function WeekCalendar({
       console.error("Invalid date string:", dateStr);
       return { day: "Unknown", startTime: "Unknown", endTime: "Unknown" };
     }
-  
+
     try {
       const date = new Date(dateStr);
-  
+
       if (isNaN(date.getTime())) {
         console.error("Invalid date format:", dateStr);
         return { day: "Unknown", startTime: "Unknown", endTime: "Unknown" };
       }
-  
+
       const day = date.toLocaleDateString("en-US", {
-        weekday: "short", // Збігається з форматом у days
+        weekday: "short",
         timeZone: "UTC",
       });
       const startTime = date.toLocaleTimeString("en-US", {
@@ -124,7 +123,7 @@ export default function WeekCalendar({
         hour12: true,
         timeZone: "UTC",
       });
-  
+
       return { day, startTime };
     } catch (error) {
       console.error("Error parsing meeting date:", error);
@@ -234,10 +233,10 @@ export default function WeekCalendar({
                           key={ev.id}
                           className="text-sm rounded-lg px-2 py-1 mb-1 truncate shadow-md"
                           style={{
-                            backgroundColor: `#34D399`, 
-                            color: ev.color, 
-                            border: `1px solid ${ev.color}80`, 
-                            boxShadow: `0 2px 4px ${ev.color}40`, 
+                            backgroundColor: `#34D399`,
+                            color: ev.color,
+                            border: `1px solid ${ev.color}80`,
+                            boxShadow: `0 2px 4px ${ev.color}40`,
                           }}
                         >
                           <div className="font-semibold">{ev.title}</div>

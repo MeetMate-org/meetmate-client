@@ -12,17 +12,8 @@ export interface VotingCardProps {
 }
 
 export const MeetingVoteCard: React.FC<VotingCardProps> = ({meeting}) => {
-  const [isMounted, setIsMounted] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [voted, setVoted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  // if (!isMounted) return null;
-
-  // if (!meeting?._id || !Array.isArray(meeting.votingOptions)) return null;
 
   const totalVotes = meeting.times.reduce(
     (sum, option) => sum + option.votes,

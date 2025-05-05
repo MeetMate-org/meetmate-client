@@ -13,12 +13,10 @@ import { TestimonialsSection } from "./ui/components/sections/slider-section";
 export default function HomePage() {
   const { user, setUser } = useAuthStore();
   const [showAuth, setShowAuth] = useState(false);
-  const [token, setToken] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      setToken(localStorage.getItem("token"));
       setUserId(localStorage.getItem("userId"));
     }
   }, []);

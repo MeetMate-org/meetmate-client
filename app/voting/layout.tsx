@@ -1,6 +1,5 @@
 import React from "react";
 import Header from "../ui/components/header";
-import { VotingTabs } from "../ui/components/voting-tabs";
 
 export default function VotingLayout({
   children,

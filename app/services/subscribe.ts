@@ -1,8 +1,8 @@
 import { ISubscribe } from '@/app/types/isubscribe';
 import Pusher from 'pusher-js';
 import { toast } from 'react-hot-toast';
-import { useGetUserById } from './auth-services';
 import { fetchUserByIdApi } from './api/authApi';
+import { INotification } from '@/app/types/isubscribe';
 
 export const subscribe = async (subscriber: ISubscribe) => {
   const pusher = new Pusher(subscriber.key, {
@@ -27,9 +27,9 @@ export const subscribe = async (subscriber: ISubscribe) => {
       toast.error("Error fetching user details");
     });
     
-    subscriber.setNotifications((prev: string[]) => {
-      const newNotifications = [...prev, data.message];
-      return newNotifications;
+    subscriber.setNotifications((prev: INotification[]) => {
+      const newNotification = data as INotification; 
+      return [...prev, newNotification];
     });
   });
 
