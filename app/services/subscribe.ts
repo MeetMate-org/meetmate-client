@@ -9,8 +9,9 @@ export const subscribe = async (subscriber: ISubscribe) => {
     cluster: subscriber.cluster,
   });
 
+
   const channel = pusher.subscribe('meetmate-channel');
-  channel.bind("new-notification", (data: {message: {
+  channel.bind(subscriber.email, (data: {message: {
     title: string;
     startTime: Date;
     endTime: Date;

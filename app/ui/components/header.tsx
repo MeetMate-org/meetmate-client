@@ -14,14 +14,16 @@ import { useSidebarStore } from "@/app/store/use-sidebar-store";
 import { subscribe } from "@/app/services/subscribe";
 import { Toaster } from "react-hot-toast";
 import { INotification } from "@/app/types/isubscribe";
+import { useGetUserById } from "@/app/services/auth-services";
 
 const Header = () => {
   const { isModalOpen, toggleModal } = useModalStore();
   const { user } = useAuthStore();
   const userButtonRef = useRef<HTMLButtonElement>(null);
   const [notifications, setNotifications] = useState<INotification[]>([]);
-  
   const [isAuthOptionsOpen, setIsAuthOptionsOpen] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+  const { toggleSidebar } = useSidebarStore();
 
   const handleUserClick = () => {
     if (!user) {
@@ -31,22 +33,31 @@ const Header = () => {
     }
   };
 
-  const { toggleSidebar } = useSidebarStore();
-
   const handleToggleSidebar = () => {
     toggleSidebar();
   };
-  
+
   const closeAuthOptions = () => {
     setIsAuthOptionsOpen(false);
   };
 
   const key: string = process.env.NEXT_PUBLIC_KEY || "";
   const cluster: string = process.env.NEXT_PUBLIC_CLUSTER || "";
+  const { data: userData } = useGetUserById(userId ?? "");
 
   useEffect(() => {
-    subscribe({ key, cluster, setNotifications, userId: user?.id || "" });
-  }, [cluster, key, user]);
+    // Access localStorage only in the browser
+    if (typeof window !== "undefined") {
+      const storedUserId = localStorage.getItem("userId");
+      setUserId(storedUserId);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (userId && userData) {
+      subscribe({ key, cluster, setNotifications, userId: user?.id || "", email: userData?.email || "" });
+    }
+  }, [cluster, key, user, userId, userData]);
 
   return (
     <>

@@ -13,4 +13,5 @@ export interface ISubscribe {
   cluster: string;
   setNotifications: (updateFn: (prev: INotification[]) => INotification[]) => void;
   userId: string;
+  email: string;
 }
