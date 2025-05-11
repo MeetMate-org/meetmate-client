@@ -97,3 +97,31 @@ export const getAllUserMeetings = async (userId: string, token: string) => {
     throw error; // Rethrow the error to be handled by the calling function
   }
 }
+
+export const editMeeting = async (
+  meetingId: string,
+  token: string,
+  startTime: Date,
+  endTime: Date
+) => {
+  try {
+    const res = await axios.put(
+      `${process.env.NEXT_PUBLIC_API_URL}/meetings/edit/${meetingId}`,
+      {
+        startTime: startTime.toISOString(),
+        endTime: endTime.toISOString(),
+      },
+      {
+        headers: {
+          "x-access-token": token,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return res.data;
+  } catch (error) {
+    console.error("Error editing meeting:", error);
+    throw error;
+  }
+};
