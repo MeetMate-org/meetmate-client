@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { IconUserMeeting } from "../svg/icon-user-meeting";
 import { IconDeadline } from "../svg/icon-deadline";
 import { IconTeam } from "../svg/icon-team";
@@ -11,35 +11,11 @@ export interface VotingCardProps {
   meeting: Meeting;
 }
 
-export const MeetingVoteCard: React.FC<VotingCardProps> = ({ meeting }) => {
-  const [isMounted, setIsMounted] = useState(false);
+export const MeetingVoteCard: React.FC<VotingCardProps> = ({meeting}) => {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [voted, setVoted] = useState(false);
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  if (!isMounted) return null;
-
-  if (!meeting?._id || !Array.isArray(meeting.votingOptions)) return null;
-
-  // const formatDeadline = (dateString: string) => {
-  //   try {
-  //     const date = new Date(dateString);
-  //     return isNaN(date.getTime())
-  //       ? dateString
-  //       : date.toLocaleDateString("en-US", {
-  //           month: "short",
-  //           day: "numeric",
-  //           year: "numeric",
-  //         });
-  //   } catch {
-  //     return dateString;
-  //   }
-  // };
-
-  const totalVotes = meeting.votingOptions.reduce(
+  const totalVotes = meeting.times.reduce(
     (sum, option) => sum + option.votes,
     0
   );

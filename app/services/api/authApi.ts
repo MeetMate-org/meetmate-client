@@ -5,7 +5,8 @@ import {
   User,
   OtpVerifyResponse,
   ResetPasswordResponse,
-  UpdateProfileResponse,
+  UserProfile,
+  // UpdateProfileResponse,
 } from "../../types/auth";
 
 const base = process.env.NEXT_PUBLIC_API_URL;
@@ -29,11 +30,31 @@ export const signupApi = (userData: {
   axios.post<AuthResponse>(`${base}/user/signup`, userData).then(r => r.data);
 
 /** GET /user/:id */
-export const fetchUserByIdApi = (id: string, token: string): Promise<User> =>
+export const fetchUserByIdApi = (id: string): Promise<User> =>
   axios
-    .get<User>(`${base}/user/${id}`, {
+    .get<User>(`${base}/user/${id}`)
+    .then(r => r.data);
+
+/** GET /user/account/ */
+export const fetchUserAccountApi = (token: string, userId: string): Promise<UserProfile> =>
+  axios
+    .get<UserProfile>(`${base}/user/account/${userId}`, {
       headers: { "x-access-token": token },
     })
+    .then(r => r.data);
+
+/** PUT /user/edit/:userId */
+export const editUserApi = (
+  token: string,
+  userId: string,
+  userData: Partial<UserProfile>
+): Promise<{ success: boolean; message: string }> =>
+  axios
+    .put<{ success: boolean; message: string }>(
+      `${base}/user/edit/${userId}`,
+      userData,
+      { headers: { "x-access-token": token } }
+    )
     .then(r => r.data);
 
 /** POST /user/verify-otp */
@@ -67,15 +88,16 @@ export const getUserProfileApi = (token: string): Promise<User> =>
     .then(r => r.data);
 
 /** PUT /user/profile */
-export const updateProfileApi = (
-  token: string,
-  profileData: Partial<User>
-): Promise<UpdateProfileResponse> =>
-  axios
-    .put<UpdateProfileResponse>(`${base}/user/profile`, profileData, {
-      headers: { "x-access-token": token },
-    })
-    .then(r => r.data);
+// BE - API does not support partial updates
+// export const updateProfileApi = (
+//   token: string,
+//   profileData: Partial<User>
+// ): Promise<UpdateProfileResponse> =>
+//   axios
+//     .put<UpdateProfileResponse>(`${base}/user/profile`, profileData, {
+//       headers: { "x-access-token": token },
+//     })
+//     .then(r => r.data);
 
 /** POST /user/change-password */
 export const changePasswordApi = (

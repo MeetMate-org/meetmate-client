@@ -3,29 +3,38 @@ import axios from "axios";
 import { addMinutes } from "date-fns";
 
 export const getMeetingsByUserId = async (userId: string, token: string) => {
-  const res = await axios.get(
-    `${process.env.NEXT_PUBLIC_API_URL}/meetings/user/${userId}`,
-    {
-      headers: {
-        "x-access-token": token,
-      },
-    }
-  );
-
-  return res.data;
+  try {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/meetings/user/${userId}`,
+      {
+        headers: {
+          "x-access-token": token,
+        },
+      }
+    );
+    return res.data;
+  } catch (error) {
+    console.error("Error fetching meetings:", error);
+    throw error; // Rethrow the error to be handled by the calling function
+  }
 };
 
 export const getAttendingMeetings = async (userId: string, token: string) => {
-  const res = await axios.get(
-    `${process.env.NEXT_PUBLIC_API_URL}/meetings/user/attending/${userId}`,
-    {
-      headers: {
-        "x-access-token": token,
-      },
-    }
-  );
-
-  return res.data;
+  try {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/meetings/user/attending/${userId}`,
+      {
+        headers: {
+          "x-access-token": token,
+        },
+      }
+    );
+  
+    return res.data;
+  } catch (error) {
+    console.error("Error fetching attending meetings:", error);
+    throw error; // Rethrow the error to be handled by the calling function
+  }
 };
 
 export const createMeeting = async (
@@ -33,36 +42,86 @@ export const createMeeting = async (
   userId: string,
   token: string
 ) => {
-  const durationInMinutes = parseInt(meetingData.duration.split(" ")[0], 10);
-  const endTime = addMinutes(
-    new Date(meetingData.selectedTime),
-    durationInMinutes
-  );
-
-  const res = await axios.post(
-    process.env.NEXT_PUBLIC_API_URL + "/meetings/create",
-    {
-      title: meetingData.title,
-      description: meetingData.description,
-      attendees: meetingData.attendees,
-      startTime: meetingData.selectedTime,
-      endTime: endTime.toISOString(),
-      times: [
-        {
-          value: meetingData.selectedTime,
-          votes: 0,
-        },
-      ],
-      createdAt: new Date().toISOString(),
-      organizer: userId,
-      participants: meetingData.attendees,
-    },
-    {
-      headers: {
-        "x-access-token": token,
+  try {
+    const durationInMinutes = parseInt(meetingData.duration.split(" ")[0], 10);
+    const endTime = addMinutes(
+      new Date(meetingData.selectedTime),
+      durationInMinutes
+    );
+  
+    const res = await axios.post(
+      process.env.NEXT_PUBLIC_API_URL + "/meetings/create",
+      {
+        title: meetingData.title,
+        description: meetingData.description,
+        attendees: meetingData.attendees,
+        startTime: meetingData.selectedTime,
+        endTime: endTime.toISOString(),
+        times: [
+          {
+            value: meetingData.selectedTime,
+            votes: 0,
+          },
+        ],
+        createdAt: new Date().toISOString(),
+        organizer: userId,
+        participants: meetingData.attendees,
       },
-    }
-  );
+      {
+        headers: {
+          "x-access-token": token,
+        },
+      }
+    );
+  
+    return res.data;
+  } catch (error) {
+    console.error("Error creating meeting:", error);
+    throw error; // Rethrow the error to be handled by the calling function
+  }
+};
 
-  return res.data;
+export const getAllUserMeetings = async (userId: string, token: string) => {
+  try {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/meetings/user/all/${userId}`,
+      {
+        headers: {
+          "x-access-token": token,
+        },
+      }
+    );
+    return res.data;
+  } catch (error) {
+    console.error("Error fetching all user meetings:", error);
+    throw error; // Rethrow the error to be handled by the calling function
+  }
+}
+
+export const editMeeting = async (
+  meetingId: string,
+  token: string,
+  startTime: Date,
+  endTime: Date
+) => {
+  try {
+    const res = await axios.put(
+      `${process.env.NEXT_PUBLIC_API_URL}/meetings/edit/${meetingId}`,
+      {
+        startTime: startTime.toISOString(),
+        endTime: endTime.toISOString(),
+      },
+      {
+        headers: {
+          "x-access-token": token,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return res.data;
+  } catch (error) {
+    console.error("Error editing meeting:", error);
+    throw error;
+  }
 };

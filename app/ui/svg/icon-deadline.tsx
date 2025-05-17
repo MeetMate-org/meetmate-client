@@ -8,8 +8,6 @@ interface IconDeadlineProps {
 
 export const IconDeadline: React.FC<IconDeadlineProps> = ({
   color = "#5E00FF",
-  strokeColor = "#5E00FF",
-  strokeWidth = 1.5,
 }) => {
   return (
     <svg

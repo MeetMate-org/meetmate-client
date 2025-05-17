@@ -9,7 +9,7 @@ export const GreetingsBox = () => {
   return (
     <div className="text-center mb-2 mt-4">
       <h1 className="text-2xl font-bold text-gray-900 mb-2">Upcoming Meetings</h1>
-      <p className="text-gray-600">Hi, {user?.name || 'Guest'}!</p>
+      <p className="text-gray-600">Hi, {user?.username || 'Guest'}!</p>
     </div>
   );
 };

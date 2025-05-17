@@ -5,20 +5,22 @@ import {
   fetchUserByIdApi,
   verifyOtpApi,
   resendOtpApi,
-  getUserProfileApi,
-  updateProfileApi,
+  // getUserProfileApi,
+  // updateProfileApi,
   changePasswordApi,
   requestPasswordResetApi,
   resetPasswordApi,
+  editUserApi,
 } from "./api/authApi";
 import {
   AuthResponse,
   LoginResponse,
-  User,
+  // User,
   OtpVerifyResponse,
   ResetPasswordResponse,
-  UpdateProfileResponse,
+  // UpdateProfileResponse,
 } from "../types/auth";
+import { fetchUserAccountApi } from "./api/authApi";
 
 export const useLogin = () =>
   useMutation<LoginResponse, Error, { identifier: string; password: string }>({
@@ -32,11 +34,25 @@ export const useSignup = () =>
     onError: e => console.error("Signup error:", e),
   });
 
-export const useGetUserById = (token: string, id: string) =>
+export const useGetUserById = (id: string) =>
   useQuery({
     queryKey: ["user", id],
-    queryFn: () => fetchUserByIdApi(id, token),
-    enabled: Boolean(token && id)
+    queryFn: () => fetchUserByIdApi(id),
+    enabled: Boolean(id)
+  });
+
+
+export const useGetAccount = (id: string, token: string) => 
+  useQuery({
+    queryKey: ["user"],
+    queryFn: () => fetchUserAccountApi(token, id),
+    enabled: Boolean(token),
+  });
+
+export const useEditUser = (token: string, userId: string) =>
+  useMutation<{ success: boolean; message: string }, Error, Partial<{ username: string; email: string }>>({
+    mutationFn: userData => editUserApi(token, userId, userData),
+    onError: e => console.error("Edit user error:", e),
   });
 
 export const useVerifyOtp = () =>
@@ -51,18 +67,18 @@ export const useResendOtp = (userId: string) =>
     onError: e => console.error("OTP resend error:", e),
   });
 
-export const useGetUserProfile = (token: string) =>
-  useQuery<User, Error>({
-    queryKey: ["userProfile"],
-    queryFn: () => getUserProfileApi(token),
-    enabled: Boolean(token)
-  });
+// export const useGetUserProfile = (token: string) =>
+//   useQuery<User, Error>({
+//     queryKey: ["userProfile"],
+//     queryFn: () => getUserProfileApi(token),
+//     enabled: Boolean(token)
+//   });
 
-export const useUpdateProfile = () =>
-  useMutation<UpdateProfileResponse, Error, { token: string; profileData: Partial<User> }>({
-    mutationFn: ({ token, profileData }) => updateProfileApi(token, profileData),
-    onError: e => console.error("Update profile error:", e),
-  });
+// export const useUpdateProfile = () =>
+//   useMutation<UpdateProfileResponse, Error, { token: string; profileData: Partial<User> }>({
+//     mutationFn: ({ token, profileData }) => updateProfileApi(token, profileData),
+//     onError: e => console.error("Update profile error:", e),
+//   });
 
 export const useChangePassword = () =>
   useMutation<{ success: boolean; message: string }, Error, { token: string; currentPassword: string; newPassword: string }>({

@@ -1,10 +1,5 @@
 import { create } from "zustand";
 
-interface VotingOption {
-  option: string;
-  votes: number;
-}
-
 export interface Meeting {
   id: string;
   _id: string;

@@ -1,6 +1,5 @@
 import React from "react";
 import Header from "../ui/components/header";
-import { VotingTabs } from "../ui/components/voting-tabs";
 
 export default function VotingLayout({
   children,
@@ -16,8 +15,7 @@ export default function VotingLayout({
           <h1 className="text-2xl font-bold text-gray-800 text-center">
             Vote for your preferred meeting times
           </h1>
-
-          <VotingTabs>{children}</VotingTabs>
+          {children}
         </main>
       </div>
     </div>
