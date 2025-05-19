@@ -1,6 +1,5 @@
 import { MeetingData } from "@/app/types/meeting-data";
 import axios from "axios";
-import { addMinutes } from "date-fns";
 
 export const getMeetingsByUserId = async (userId: string, token: string) => {
   try {
@@ -40,7 +39,8 @@ export const getAttendingMeetings = async (userId: string, token: string) => {
 export const createMeeting = async (
   meetingData: MeetingData,
   userId: string,
-  token: string
+  token: string,
+  userName: string
 ) => {
   try {
   
@@ -60,6 +60,7 @@ export const createMeeting = async (
         ],
         createdAt: new Date().toISOString(),
         organizer: userId,
+        organizerName: userName,
         participants: meetingData.attendees,
       },
       {
