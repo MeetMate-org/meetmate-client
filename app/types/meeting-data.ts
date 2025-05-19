@@ -1,7 +1,7 @@
 export interface MeetingData {
   title: string;
   description: string;
-  duration: string;
+  duration: number;
   attendees: string[];
   selectedTime: string;
   link: string;

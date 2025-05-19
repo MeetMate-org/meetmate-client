@@ -47,7 +47,8 @@ export const useAuth = () => {
       }
 
       const authData = res as unknown as AuthResponse;
-      localStorage.setItem("token", authData.token);
+      
+      localStorage.setItem("token", authData.accessToken);
       localStorage.setItem("userId", authData.userId);
 
       const user: User = await fetchUserByIdApi(authData.userId);

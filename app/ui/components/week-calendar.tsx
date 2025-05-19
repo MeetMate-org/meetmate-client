@@ -1,10 +1,11 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { editMeeting } from "@/app/services/api/meetingsApi";
 import { IconArrow } from "../svg/icon-arrow";
-import { Meeting } from "@/app/store/use-meetings-store";
+import { Meeting, useMeetingsStore } from "@/app/store/use-meetings-store";
 import { toast, Toaster } from "react-hot-toast";
 
 export const HOURS = [
@@ -30,7 +31,8 @@ interface CalendarEvent {
   color: string;
 }
 
-export default function WeekCalendar({ meetings, setMeetings }: { meetings: Meeting[], setMeetings: (meetings: Meeting[]) => Meeting; }) {
+export default function WeekCalendar() {
+  const { meetings, setMeetings } = useMeetingsStore();
   const [isClient, setIsClient] = useState(false);
   const [currentWeek, setCurrentWeek] = useState<{ start: Date; end: Date }>();
   const [days, setDays] = useState<{ label: string; date: string }[]>([]);
@@ -107,9 +109,15 @@ export default function WeekCalendar({ meetings, setMeetings }: { meetings: Meet
       item: { id: event.id },
     }));
 
+    const dragRef = React.useRef<HTMLDivElement>(null);
+    const combinedRef = (node: HTMLDivElement | null) => {
+      drag(node);
+      dragRef.current = node;
+    };
+
     return (
       <div
-        ref={drag}
+        ref={combinedRef}
         className="text-sm rounded-lg px-2 py-1 mb-1 truncate shadow-md"
         style={{
           backgroundColor: event.color || "#34D399",
@@ -151,7 +159,7 @@ export default function WeekCalendar({ meetings, setMeetings }: { meetings: Meet
     }));
 
     return (
-      <td ref={drop} className="p-2 border border-purple-100 align-top relative">
+      <td ref={(node) => { drop(node); }} className="p-2 border border-purple-100 align-top relative">
         {children}
       </td>
     );

@@ -14,7 +14,7 @@ const ScheduleMeeting = () => {
   const [meetingData, setMeetingData] = useState({
     title: "",
     description: "",
-    duration: "",
+    duration: 0,
     attendees: [] as string[],
     selectedTime: "",
     link: "",

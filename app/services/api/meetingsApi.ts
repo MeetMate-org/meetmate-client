@@ -43,11 +43,6 @@ export const createMeeting = async (
   token: string
 ) => {
   try {
-    const durationInMinutes = parseInt(meetingData.duration.split(" ")[0], 10);
-    const endTime = addMinutes(
-      new Date(meetingData.selectedTime),
-      durationInMinutes
-    );
   
     const res = await axios.post(
       process.env.NEXT_PUBLIC_API_URL + "/meetings/create",
@@ -56,7 +51,7 @@ export const createMeeting = async (
         description: meetingData.description,
         attendees: meetingData.attendees,
         startTime: meetingData.selectedTime,
-        endTime: endTime.toISOString(),
+        duration: meetingData.duration,
         times: [
           {
             value: meetingData.selectedTime,

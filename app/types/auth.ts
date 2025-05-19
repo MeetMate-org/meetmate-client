@@ -18,7 +18,7 @@ export interface LoginResponse {
 }
 
 export interface AuthResponse {
-  token: string;
+  accessToken: string;
   userId: string;
   username: string;
   email: string;
@@ -27,7 +27,7 @@ export interface AuthResponse {
 export interface OtpVerifyResponse {
   success: boolean;
   message?: string;
-  token?: string;
+  accessToken?: string;
   error?: string;
 }
 

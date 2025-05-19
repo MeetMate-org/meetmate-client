@@ -50,7 +50,7 @@ const Confirmination = ({ meetingData, setMeetingData }: {
       setMeetingData({
         title: "",
         description: "",
-        duration: "",
+        duration: 0,
         attendees: [] as string[],
         selectedTime: "",
         link: "",
