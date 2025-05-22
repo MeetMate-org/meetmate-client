@@ -1,7 +1,6 @@
 import { ISubscribe } from '@/app/types/isubscribe';
 import Pusher from 'pusher-js';
 import { toast } from 'react-hot-toast';
-import { fetchUserByIdApi } from './api/authApi';
 import { INotification } from '@/app/types/isubscribe';
 
 export const subscribe = async (subscriber: ISubscribe) => {
@@ -14,19 +13,11 @@ export const subscribe = async (subscriber: ISubscribe) => {
   channel.bind(subscriber.email, (data: {message: {
     title: string;
     startTime: Date;
-    endTime: Date;
+    duration: number;
   }, organizer: string}) => {
-    fetchUserByIdApi(data.organizer).then((user) => {
-      if (user) {
-        toast(
-          `${data.message.title} scheduled by ${user.username} at ${new Date(data.message.startTime).toLocaleTimeString()} - ${new Date(data.message.endTime).toLocaleTimeString()}`,
-        );
-      }
-    }
-    ).catch((error) => {
-      console.error("Error fetching user by ID:", error);
-      toast.error("Error fetching user details");
-    });
+      toast(
+        `${data.message.title} scheduled by ${subscriber.username} at ${new Date(data.message.startTime).toLocaleTimeString()} for ${data.message.duration} minutes`,
+      );
     
     subscriber.setNotifications((prev: INotification[]) => {
       const newNotification = data as INotification; 

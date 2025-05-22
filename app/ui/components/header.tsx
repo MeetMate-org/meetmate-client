@@ -55,7 +55,7 @@ const Header = () => {
 
   useEffect(() => {
     if (userId && userData) {
-      subscribe({ key, cluster, setNotifications, userId: user?.id || "", email: userData?.email || "" });
+      subscribe({ key, cluster, setNotifications, username: user?.username || "", email: userData?.email || "" });
     }
   }, [cluster, key, user, userId, userData]);
 
