@@ -9,6 +9,7 @@ export interface Meeting {
   organizer: string;
   participants: string[];
   startTime: string;
+  duration: number;
   times: {
     value: string;
     votes: number;

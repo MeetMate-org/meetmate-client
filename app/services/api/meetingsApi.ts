@@ -97,15 +97,13 @@ export const getAllUserMeetings = async (userId: string, token: string) => {
 export const editMeeting = async (
   meetingId: string,
   token: string,
-  startTime: Date,
-  endTime: Date
+  startTime: Date
 ) => {
   try {
     const res = await axios.put(
       `${process.env.NEXT_PUBLIC_API_URL}/meetings/edit/${meetingId}`,
       {
         startTime: startTime.toISOString(),
-        endTime: endTime.toISOString(),
       },
       {
         headers: {

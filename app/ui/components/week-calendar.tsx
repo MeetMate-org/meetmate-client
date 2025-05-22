@@ -27,9 +27,35 @@ interface CalendarEvent {
   title: string;
   day: string;
   startTime: string;
-  endTime: string;
+  duration: number;
   color: string;
 }
+
+const calculateEndTime = (startTime: string, duration: number): string => {
+  const [time, modifier] = startTime.split(" ");
+  let [hours, minutes] = time.split(":").map(Number);
+
+  if (modifier === "PM" && hours !== 12) hours += 12;
+  if (modifier === "AM" && hours === 12) hours = 0;
+
+  const now = new Date();
+  const startDate = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+    hours,
+    minutes
+  );
+
+  const endDate = new Date(startDate);
+  endDate.setMinutes(endDate.getMinutes() + duration);
+
+  return endDate.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
+};
 
 export default function WeekCalendar() {
   const { meetings, setMeetings } = useMeetingsStore();
@@ -79,11 +105,9 @@ export default function WeekCalendar() {
       // Створюємо дату у локальному часовому поясі
       const [year, month, day] = newDay.split("-").map(Number);
       const newStartTime = new Date(year, month - 1, day, hours, minutes); // Локальний час
-      const newEndTime = new Date(newStartTime);
-      newEndTime.setMinutes(newEndTime.getMinutes() + 60); // Додаємо 1 годину
 
       // Викликаємо API для оновлення мітингу
-      await editMeeting(meetingId, token, newStartTime, newEndTime);
+      await editMeeting(meetingId, token, newStartTime);
 
       // Оновлюємо стан мітингів
       setMeetings(
@@ -92,7 +116,6 @@ export default function WeekCalendar() {
             ? {
                 ...meeting,
                 startTime: newStartTime.toISOString(),
-                endTime: newEndTime.toISOString(),
               }
             : meeting
         )
@@ -127,7 +150,7 @@ export default function WeekCalendar() {
       >
         <div className="font-semibold">{event.title}</div>
         <div className="text-xs">
-          {event.startTime} – {event.endTime}
+          {event.startTime} – {calculateEndTime(event.startTime, event.duration)}
         </div>
       </div>
     );
@@ -208,7 +231,6 @@ export default function WeekCalendar() {
 
   const calendarEvents: CalendarEvent[] = meetings.map((meeting) => {
     const startDate = new Date(meeting.startTime);
-    const endDate = new Date(meeting.endTime);
 
     // Конвертуємо час у формат AM/PM
     const startTime = startDate.toLocaleTimeString("en-US", {
@@ -216,11 +238,16 @@ export default function WeekCalendar() {
       minute: "2-digit",
       hour12: true,
     });
-    const endTime = endDate.toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    });
+    const endTime = (() => {
+      const endDate = new Date(startDate);
+      endDate.setMinutes(endDate.getMinutes() + meeting.duration);
+      return endDate.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      });
+    }
+    )();
 
     const day = startDate.toISOString().split("T")[0]; // Дата у форматі YYYY-MM-DD
 
@@ -229,7 +256,7 @@ export default function WeekCalendar() {
       title: meeting.title,
       day,
       startTime,
-      endTime,
+      duration: meeting.duration,
       color: meeting.color || "#34D399",
     };
   });
