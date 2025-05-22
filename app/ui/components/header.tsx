@@ -15,6 +15,7 @@ import { subscribe } from "@/app/services/subscribe";
 import { Toaster } from "react-hot-toast";
 import { INotification } from "@/app/types/isubscribe";
 import { useGetUserById } from "@/app/services/auth-services";
+import NotificationsModal from "./modals/notifications-modal";
 
 const Header = () => {
   const { isModalOpen, toggleModal } = useModalStore();
@@ -24,6 +25,7 @@ const Header = () => {
   const [isAuthOptionsOpen, setIsAuthOptionsOpen] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const { toggleSidebar } = useSidebarStore();
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 
   const handleUserClick = () => {
     if (!user) {
@@ -54,8 +56,13 @@ const Header = () => {
   }, []);
 
   useEffect(() => {
+    setNotifications(userData?.notifications || []);
+  }, [userData]);
+  
+
+  useEffect(() => {
     if (userId && userData) {
-      subscribe({ key, cluster, setNotifications, userId: user?.id || "", email: userData?.email || "" });
+      subscribe({ key, cluster, setNotifications, username: user?.username || "", email: userData?.email || "" });
     }
   }, [cluster, key, user, userId, userData]);
 
@@ -67,7 +74,14 @@ const Header = () => {
             <IconLogo color={colorPrimary} />
           </div>
           <div className="flex items-center space-x-4">
-            {notifications.length > 0 && <IconBell />}
+              <>
+                {notifications.length > 0 && (
+                  <button onClick={() => setIsNotificationsOpen(true)} className="focus:outline-none">
+                    <IconBell />
+                  </button>
+                )}
+                {isNotificationsOpen && <NotificationsModal notifications={notifications} setIsNotificationsOpen={setIsNotificationsOpen} />}
+              </>
             <div className="relative">
               <button 
                 ref={userButtonRef}

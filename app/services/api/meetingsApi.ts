@@ -1,6 +1,5 @@
 import { MeetingData } from "@/app/types/meeting-data";
 import axios from "axios";
-import { addMinutes } from "date-fns";
 
 export const getMeetingsByUserId = async (userId: string, token: string) => {
   try {
@@ -40,14 +39,10 @@ export const getAttendingMeetings = async (userId: string, token: string) => {
 export const createMeeting = async (
   meetingData: MeetingData,
   userId: string,
-  token: string
+  token: string,
+  userName: string
 ) => {
   try {
-    const durationInMinutes = parseInt(meetingData.duration.split(" ")[0], 10);
-    const endTime = addMinutes(
-      new Date(meetingData.selectedTime),
-      durationInMinutes
-    );
   
     const res = await axios.post(
       process.env.NEXT_PUBLIC_API_URL + "/meetings/create",
@@ -56,7 +51,7 @@ export const createMeeting = async (
         description: meetingData.description,
         attendees: meetingData.attendees,
         startTime: meetingData.selectedTime,
-        endTime: endTime.toISOString(),
+        duration: meetingData.duration,
         times: [
           {
             value: meetingData.selectedTime,
@@ -65,6 +60,7 @@ export const createMeeting = async (
         ],
         createdAt: new Date().toISOString(),
         organizer: userId,
+        organizerName: userName,
         participants: meetingData.attendees,
       },
       {
@@ -101,15 +97,13 @@ export const getAllUserMeetings = async (userId: string, token: string) => {
 export const editMeeting = async (
   meetingId: string,
   token: string,
-  startTime: Date,
-  endTime: Date
+  startTime: Date
 ) => {
   try {
     const res = await axios.put(
       `${process.env.NEXT_PUBLIC_API_URL}/meetings/edit/${meetingId}`,
       {
         startTime: startTime.toISOString(),
-        endTime: endTime.toISOString(),
       },
       {
         headers: {

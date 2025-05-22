@@ -1,8 +1,11 @@
+import { INotification } from "./isubscribe";
+
 export interface User {
   id: string;
   email: string;
   username: string;
   role?: string;
+  notifications?: INotification[];
 }
 
 export interface UserProfile {
@@ -18,7 +21,7 @@ export interface LoginResponse {
 }
 
 export interface AuthResponse {
-  token: string;
+  accessToken: string;
   userId: string;
   username: string;
   email: string;
@@ -27,7 +30,7 @@ export interface AuthResponse {
 export interface OtpVerifyResponse {
   success: boolean;
   message?: string;
-  token?: string;
+  accessToken?: string;
   error?: string;
 }
 

@@ -3,7 +3,7 @@ export interface INotification {
   message: {
     title: string;
     startTime: Date;
-    endTime: Date;
+    duration: number;
   }
   organizer: string;
 }
@@ -12,6 +12,6 @@ export interface ISubscribe {
   key: string;
   cluster: string;
   setNotifications: (updateFn: (prev: INotification[]) => INotification[]) => void;
-  userId: string;
+  username: string;
   email: string;
 }

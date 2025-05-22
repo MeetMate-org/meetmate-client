@@ -1,10 +1,11 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { editMeeting } from "@/app/services/api/meetingsApi";
 import { IconArrow } from "../svg/icon-arrow";
-import { Meeting } from "@/app/store/use-meetings-store";
+import { Meeting, useMeetingsStore } from "@/app/store/use-meetings-store";
 import { toast, Toaster } from "react-hot-toast";
 
 export const HOURS = [
@@ -26,11 +27,38 @@ interface CalendarEvent {
   title: string;
   day: string;
   startTime: string;
-  endTime: string;
+  duration: number;
   color: string;
 }
 
-export default function WeekCalendar({ meetings, setMeetings }: { meetings: Meeting[], setMeetings: (meetings: Meeting[]) => Meeting; }) {
+const calculateEndTime = (startTime: string, duration: number): string => {
+  const [time, modifier] = startTime.split(" ");
+  let [hours, minutes] = time.split(":").map(Number);
+
+  if (modifier === "PM" && hours !== 12) hours += 12;
+  if (modifier === "AM" && hours === 12) hours = 0;
+
+  const now = new Date();
+  const startDate = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+    hours,
+    minutes
+  );
+
+  const endDate = new Date(startDate);
+  endDate.setMinutes(endDate.getMinutes() + duration);
+
+  return endDate.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
+};
+
+export default function WeekCalendar() {
+  const { meetings, setMeetings } = useMeetingsStore();
   const [isClient, setIsClient] = useState(false);
   const [currentWeek, setCurrentWeek] = useState<{ start: Date; end: Date }>();
   const [days, setDays] = useState<{ label: string; date: string }[]>([]);
@@ -77,11 +105,9 @@ export default function WeekCalendar({ meetings, setMeetings }: { meetings: Meet
       // Створюємо дату у локальному часовому поясі
       const [year, month, day] = newDay.split("-").map(Number);
       const newStartTime = new Date(year, month - 1, day, hours, minutes); // Локальний час
-      const newEndTime = new Date(newStartTime);
-      newEndTime.setMinutes(newEndTime.getMinutes() + 60); // Додаємо 1 годину
 
       // Викликаємо API для оновлення мітингу
-      await editMeeting(meetingId, token, newStartTime, newEndTime);
+      await editMeeting(meetingId, token, newStartTime);
 
       // Оновлюємо стан мітингів
       setMeetings(
@@ -90,7 +116,6 @@ export default function WeekCalendar({ meetings, setMeetings }: { meetings: Meet
             ? {
                 ...meeting,
                 startTime: newStartTime.toISOString(),
-                endTime: newEndTime.toISOString(),
               }
             : meeting
         )
@@ -107,9 +132,15 @@ export default function WeekCalendar({ meetings, setMeetings }: { meetings: Meet
       item: { id: event.id },
     }));
 
+    const dragRef = React.useRef<HTMLDivElement>(null);
+    const combinedRef = (node: HTMLDivElement | null) => {
+      drag(node);
+      dragRef.current = node;
+    };
+
     return (
       <div
-        ref={drag}
+        ref={combinedRef}
         className="text-sm rounded-lg px-2 py-1 mb-1 truncate shadow-md"
         style={{
           backgroundColor: event.color || "#34D399",
@@ -119,7 +150,7 @@ export default function WeekCalendar({ meetings, setMeetings }: { meetings: Meet
       >
         <div className="font-semibold">{event.title}</div>
         <div className="text-xs">
-          {event.startTime} – {event.endTime}
+          {event.startTime} – {calculateEndTime(event.startTime, event.duration)}
         </div>
       </div>
     );
@@ -151,7 +182,7 @@ export default function WeekCalendar({ meetings, setMeetings }: { meetings: Meet
     }));
 
     return (
-      <td ref={drop} className="p-2 border border-purple-100 align-top relative">
+      <td ref={(node) => { drop(node); }} className="p-2 border border-purple-100 align-top relative">
         {children}
       </td>
     );
@@ -200,7 +231,6 @@ export default function WeekCalendar({ meetings, setMeetings }: { meetings: Meet
 
   const calendarEvents: CalendarEvent[] = meetings.map((meeting) => {
     const startDate = new Date(meeting.startTime);
-    const endDate = new Date(meeting.endTime);
 
     // Конвертуємо час у формат AM/PM
     const startTime = startDate.toLocaleTimeString("en-US", {
@@ -208,11 +238,16 @@ export default function WeekCalendar({ meetings, setMeetings }: { meetings: Meet
       minute: "2-digit",
       hour12: true,
     });
-    const endTime = endDate.toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    });
+    const endTime = (() => {
+      const endDate = new Date(startDate);
+      endDate.setMinutes(endDate.getMinutes() + meeting.duration);
+      return endDate.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      });
+    }
+    )();
 
     const day = startDate.toISOString().split("T")[0]; // Дата у форматі YYYY-MM-DD
 
@@ -221,7 +256,7 @@ export default function WeekCalendar({ meetings, setMeetings }: { meetings: Meet
       title: meeting.title,
       day,
       startTime,
-      endTime,
+      duration: meeting.duration,
       color: meeting.color || "#34D399",
     };
   });

@@ -52,7 +52,7 @@ export default function CalendarRoute() {
       </div>
 
       <div className="hidden md:block">
-        {meetings && <WeekCalendar meetings={meetings} setMeetings={setMeetings} />}
+        {meetings && <WeekCalendar />}
       </div>
     </div>
   );

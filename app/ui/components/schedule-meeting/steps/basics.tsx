@@ -54,7 +54,7 @@ const Basics = ({
             onChange={(e) => {
               setMeetingData((prev) => ({
                 ...prev,
-                duration: e.target.value,
+                duration: parseInt(e.target.value),
               }));
             }}
           >

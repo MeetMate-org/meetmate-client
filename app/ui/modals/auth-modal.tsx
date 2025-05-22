@@ -20,7 +20,7 @@ import { useAuthStore } from "@/app/store/use-auth-store";
 import { fetchUserByIdApi } from "@/app/services/api/authApi";
 
 interface ApiLoginResponse {
-  token: string;
+  accessToken: string;
   userId: string;
   success?: boolean;
   error?: string;
@@ -114,8 +114,8 @@ export const AuthModal: React.FC = () => {
             signUpMutation.mutate(
               { username, email, password },
               {
-                onSuccess: ({ token, userId }) => {
-                  localStorage.setItem("token", token);
+                onSuccess: ({ accessToken, userId }) => {
+                  localStorage.setItem("token", accessToken);
                   localStorage.setItem("userId", userId);
                   setRegisteredEmail(email);
                   switchToOTP();
@@ -155,8 +155,8 @@ export const AuthModal: React.FC = () => {
               { identifier, password },
               {
                 onSuccess: async (response) => {
-                  const { token, userId } = response as ApiLoginResponse;
-                  localStorage.setItem("token", token);
+                  const { accessToken, userId } = response as ApiLoginResponse;
+                  localStorage.setItem("token", accessToken);
                   localStorage.setItem("userId", userId);
                 
                   try {
@@ -233,8 +233,8 @@ export const AuthModal: React.FC = () => {
               { email: registeredEmail, otpToken: code },
               {
                 onSuccess: (res) => {
-                  if (res.token) {
-                    localStorage.setItem("token", res.token);
+                  if (res.accessToken) {
+                    localStorage.setItem("token", res.accessToken);
                     handleClose();
                     router.push("/home");
                   } else {

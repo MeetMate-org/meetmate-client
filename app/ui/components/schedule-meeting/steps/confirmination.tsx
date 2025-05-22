@@ -13,7 +13,8 @@ const Confirmination = ({ meetingData, setMeetingData }: {
   const mutation = useMutation({
     mutationFn: (meetingData: MeetingData) => {
       const id = typeof window !== "undefined" ? localStorage.getItem("userId") : null;
-  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+      const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+      const userName = typeof window !== "undefined" ? localStorage.getItem("username") : "";
       
       if (!token) {
         throw new Error("Token is missing");
@@ -23,7 +24,7 @@ const Confirmination = ({ meetingData, setMeetingData }: {
         throw new Error("User ID is missing");
       }
       
-      return createMeeting(meetingData, id, token);
+      return createMeeting(meetingData, id, token, userName || "");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["meetings"] });
@@ -50,7 +51,7 @@ const Confirmination = ({ meetingData, setMeetingData }: {
       setMeetingData({
         title: "",
         description: "",
-        duration: "",
+        duration: 0,
         attendees: [] as string[],
         selectedTime: "",
         link: "",
