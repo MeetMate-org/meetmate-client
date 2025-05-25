@@ -9,23 +9,25 @@ import heroBg from "@/public/images/meetmate1.jpg";
 import { KeyFeaturesSection } from "./ui/components/sections/key-features-section";
 import { Footer } from "./ui/components/footer";
 import { TestimonialsSection } from "./ui/components/sections/slider-section";
+import { useRouter } from "next/navigation";
 
 export default function HomePage() {
   const { user, setUser } = useAuthStore();
   const [showAuth, setShowAuth] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      setUserId(localStorage.getItem("userId"));
+      const storedUserId = localStorage.getItem("userId");
+      setUserId(storedUserId);
+      if (storedUserId) {
+        router.replace("/home");
+      }
     }
-  }, []);
+  }, [router]);
 
-  const {
-    data: userData,
-    isLoading,
-    isError,
-  } = useGetUserById(userId ?? "");
+  const { data: userData, isLoading, isError } = useGetUserById(userId ?? "");
 
   useEffect(() => {
     if (isLoading) return;

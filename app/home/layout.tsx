@@ -12,12 +12,12 @@ export default function HomePage() {
   // Hydrate user from localStorage on mount
   useEffect(() => {
     if (!user) {
-      const token = localStorage.getItem("token");
+      const accessToken = localStorage.getItem("accessToken");
       const userId = localStorage.getItem("userId");
       const email = localStorage.getItem("email");
       const username = localStorage.getItem("username");
 
-      if (token && userId) {
+      if (accessToken && userId) {
         setUser({ id: userId, email: email || "", username: username || "" });
         return;
       }

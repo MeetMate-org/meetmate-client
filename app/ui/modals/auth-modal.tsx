@@ -115,7 +115,7 @@ export const AuthModal: React.FC = () => {
               { username, email, password },
               {
                 onSuccess: ({ accessToken, userId }) => {
-                  localStorage.setItem("token", accessToken);
+                  localStorage.setItem("accessToken", accessToken);
                   localStorage.setItem("userId", userId);
                   setRegisteredEmail(email);
                   switchToOTP();
@@ -156,7 +156,7 @@ export const AuthModal: React.FC = () => {
               {
                 onSuccess: async (response) => {
                   const { accessToken, userId } = response as ApiLoginResponse;
-                  localStorage.setItem("token", accessToken);
+                  localStorage.setItem("accessToken", accessToken);
                   localStorage.setItem("userId", userId);
                 
                   try {
