@@ -1,45 +1,21 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { IconUserMeeting } from "../svg/icon-user-meeting";
 import { IconDeadline } from "../svg/icon-deadline";
 import { IconTeam } from "../svg/icon-team";
 import { IconCircle } from "../svg/icon-circle";
-import { useMeetingsStore, type Meeting } from "@/app/store/use-meetings-store";
+import { Meeting } from "@/app/store/use-meetings-store";
 
 export interface VotingCardProps {
   meeting: Meeting;
 }
 
-export const MeetingVoteCard: React.FC<VotingCardProps> = ({ meeting }) => {
-  const [isMounted, setIsMounted] = useState(false);
+export const MeetingVoteCard: React.FC<VotingCardProps> = ({meeting}) => {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [voted, setVoted] = useState(false);
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  if (!isMounted) return null;
-
-  if (!meeting?.id || !Array.isArray(meeting.votingOptions)) return null;
-
-  const formatDeadline = (dateString: string) => {
-    try {
-      const date = new Date(dateString);
-      return isNaN(date.getTime())
-        ? dateString
-        : date.toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-          });
-    } catch {
-      return dateString;
-    }
-  };
-
-  const totalVotes = meeting.votingOptions.reduce(
+  const totalVotes = meeting.times.reduce(
     (sum, option) => sum + option.votes,
     0
   );
@@ -54,7 +30,7 @@ export const MeetingVoteCard: React.FC<VotingCardProps> = ({ meeting }) => {
   return (
     <div className="bg-white rounded-xl shadow-md border border-green-300 w-full max-w-xs md:max-w-2xl p-4 mx-auto flex flex-col justify-between min-h-[480px] mt-4">
       <div className="md:flex md:items-center md:justify-between">
-        <h3 className="text-lg font-semibold text-gray-900">{meeting.name}</h3>
+        <h3 className="text-lg font-semibold text-gray-900">{meeting.title}</h3>
       </div>
 
       <div>
@@ -64,12 +40,8 @@ export const MeetingVoteCard: React.FC<VotingCardProps> = ({ meeting }) => {
             <span>{meeting.participants.length} attendees</span>
           </div>
           <div className="flex items-center space-x-1">
-            <IconTeam color="#5E00FF" />
-            <span>{meeting.teamName}</span>
-          </div>
-          <div className="flex items-center space-x-1">
             <IconDeadline />
-            <span>Deadline: {meeting.deadline}</span>
+            <span>Deadline: {new Date(meeting.endTime).toLocaleString()}</span>
           </div>
         </div>
       </div>
@@ -93,7 +65,7 @@ export const MeetingVoteCard: React.FC<VotingCardProps> = ({ meeting }) => {
       <hr className="my-2 border-t border-gray-300" />
 
       <div className="space-y-2">
-        {meeting.votingOptions.map((option, index) => {
+        {meeting.times.map((option, index) => {
           const percentage = totalVotes ? (option.votes / totalVotes) * 100 : 0;
           const isSelected = selectedIndex === index;
 
@@ -109,10 +81,10 @@ export const MeetingVoteCard: React.FC<VotingCardProps> = ({ meeting }) => {
                     filled={isSelected}
                     color={isSelected ? "#7C3AED" : "#E5E7EB"}
                   />
-                  <span className="text-sm text-gray-800">{option.option}</span>
+                  <span className="text-sm text-gray-800">{option.value}</span>
                 </div>
                 <span className="text-sm text-gray-500 mt-1 md:mt-0 md:ml-2 whitespace-nowrap">
-                  {option.votes} {option.votes === 1 ? "vote" : "votes"}
+                  {option.value} {option.votes === 1 ? "vote" : "votes"}
                 </span>
               </div>
 

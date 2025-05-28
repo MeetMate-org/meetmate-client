@@ -24,7 +24,7 @@ export const VotingTabs: React.FC<VotingTabsProps> = ({ children }) => {
               : "bg-transparent text-white md:text-gray-600"
           }`}
         >
-          I'm hosting
+          I&apos;m hosting
         </Link>
         <Link
           href={"/voting/attend"}
@@ -34,7 +34,7 @@ export const VotingTabs: React.FC<VotingTabsProps> = ({ children }) => {
               : "bg-transparent text-white md:text-gray-600"
           }`}
         >
-          I'm attending
+          I&apos;m attending
         </Link>
       </div>
       {children}

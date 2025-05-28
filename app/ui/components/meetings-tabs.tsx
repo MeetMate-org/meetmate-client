@@ -24,7 +24,7 @@ export const MeetingsTabs: React.FC<MeetingsTabsProps> = ({ children }) => {
               : "bg-transparent text-white md:text-gray-600"
           }`}
         >
-          I'm hosting
+          I&apos;m hosting
         </Link>
         <Link
           href={"/meetings/attend"}
@@ -34,7 +34,7 @@ export const MeetingsTabs: React.FC<MeetingsTabsProps> = ({ children }) => {
               : "bg-transparent text-white md:text-gray-600"
           }`}
         >
-          <span>I'm attending</span>
+          <span>I&apos;m attending</span>
         </Link>
       </div>
       {children}

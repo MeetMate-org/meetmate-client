@@ -15,7 +15,6 @@ export interface CreateModalState {
 
 export const useModalStore = create<ModalState>((set) => ({
   isModalOpen: false,
-
   toggleModal: () => set((state) => ({ isModalOpen: !state.isModalOpen })),
 }));
 
@@ -26,3 +25,5 @@ export const useCreateModalStore = create<CreateModalState>((set) => ({
   toggleModal: () => set((state) => ({ isModalOpen: !state.isModalOpen })),
   setConfirmed: (confirmed: boolean) => set({ isConfirmed: confirmed }),
 }));
+  toggleModal: () => set((state) => ({ isModalOpen: !state.isModalOpen })),
+})); 

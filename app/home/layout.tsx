@@ -1,64 +1,91 @@
 "use client";
 
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { getUserById } from "../api/auth";
 import { useAuthStore } from "../store/use-auth-store";
 import Header from "../ui/components/header";
-import { Tabs } from "../ui/components/tabs";
-import { GreetingsBox } from "../ui/components/greetings-box";
+import WelcomeBanner from "../ui/components/welcome-banner";
+import UpcomingEvents from "../ui/components/upcoming-events";
+import QuickActions from "../ui/components/quick-actions";
+import Statistics from "../ui/components/statisctics";
+import Notifications from "../ui/components/notifications";
+import Recommendations from "../ui/components/recommendations";
+import RecentActivity from "../ui/components/recent-activity";
+import Settings from "../ui/components/settings";
+import { WeeklyHoursPicker } from "../ui/components/time-picker";
 
-export default function HomeLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+
+export default function HomePage() {
   const router = useRouter();
-  const { setUser } = useAuthStore();
-
-  const initAuth = useCallback(async () => {
-    const token = localStorage.getItem("token");
-    const shortId = localStorage.getItem("shortId");
-
-    if (!token || !shortId) {
-      router.push("/auth/login");
-      return;
-    }
-
-    try {
-      const userData = await getUserById(token, shortId);
-      if (userData?.username) {
-        setUser({
-          id: shortId,
-          email: userData.username,
-          name: userData.username,
-          role: "user",
-        });
-      } else {
-        console.error("Invalid user data:", userData);
-        router.push("/auth/login");
-      }
-    } catch (error) {
-      console.error("Error loading user data:", error);
-      router.push("/auth/login");
-    }
-  }, [router, setUser]);
+  const { user, setUser } = useAuthStore();
 
   useEffect(() => {
-    initAuth();
-  }, [initAuth]);
+    if (!user) {
+      const accessToken = localStorage.getItem("accessToken");
+      const userId = localStorage.getItem("userId");
+      const email = localStorage.getItem("email");
+      const username = localStorage.getItem("username");
+
+      if (accessToken && userId) {
+        setUser({ id: userId, email: email || "", username: username || "" });
+        return;
+      }
+      router.replace("/");
+    }
+  }, [user, setUser, router]);
+
+  if (!user) return null;
+
+  // dummy data
+  const dummyEvents = [
+    { id: "1", title: "React Meetup", date: "2025-05-02" },
+    { id: "2", title: "Online Conference", date: "2025-05-05" },
+  ];
+  const dummyActions = [
+    { label: "New Meeting", onClick: () => {} },
+    { label: "Create Group", onClick: () => {} },
+    { label: "Contacts", onClick: () => {} },
+  ];
+  const dummyStats = { meetings: 12, contacts: 34 };
+  const dummyNotifications = [
+    { id: "1", message: "You have a group invitation", unread: true },
+    { id: "2", message: "New message from Olena", unread: false },
+  ];
+  const dummyRecommendations = [
+    { id: "1", name: "React Developers" },
+    { id: "2", name: "Expert Roundtable" },
+  ];
+  const dummyActivity = [
+    { id: "1", description: "Created group 'Frontend UA'" },
+    { id: "2", description: "Updated profile" },
+  ];
 
   return (
-    <div className="flex h-screen bg-gray-100">
-
+    <div className="flex h-screen bg-gray-50">
       <div className="flex-1 flex flex-col overflow-hidden">
-        <Header />
+        <Header/>
 
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 px-6 py-8">
-          <GreetingsBox />
-          <Tabs>
-            {children}
-          </Tabs>
+        <main className="flex-1 overflow-auto p-4 sm:p-6 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 auto-rows-min">
+          <WelcomeBanner
+            username={user.username}
+            lastLogin="Today at 3:00 PM"
+            onProfileClick={() => router.push("/profile")}
+          />
+
+          <UpcomingEvents events={dummyEvents} />
+          <QuickActions actions={dummyActions} />
+          <Statistics stats={dummyStats} />
+          <Notifications notifications={dummyNotifications} />
+          <Recommendations items={dummyRecommendations} />
+          <RecentActivity activities={dummyActivity} />
+          <Settings
+            onToggleTheme={() => {/* toggle theme logic */}}
+            onChangeLanguage={() => {/* change language logic */}}
+          />
+
+          <div className="col-span-full md:col-start-2 md:col-span-3">
+            <WeeklyHoursPicker />
+          </div>
         </main>
       </div>
     </div>

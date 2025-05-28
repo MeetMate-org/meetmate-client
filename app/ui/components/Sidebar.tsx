@@ -6,9 +6,9 @@ import { IconLogo } from "../svg/icon-logo";
 import { IconHome } from "../svg/icon-home";
 import { IconCalender } from "../svg/icon-calendar";
 import { IconLetter } from "../svg/icon-letter";
-import { IconUserMeeting } from "../svg/icon-user-meeting";
 import { colorPrimary } from "@/utils/utils";
 import { useSidebarStore } from "@/app/store/use-sidebar-store";
+import { useScheduleModalStore } from "@/app/store/use-schedule-store";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -17,6 +17,7 @@ interface SidebarProps {
 
 export const Sidebar: React.FC<SidebarProps> = ({ children }) => {
   const pathname = usePathname();
+  const { toggleScheduleModal } = useScheduleModalStore();
 
   const linkClasses = (href: string) =>
     `flex items-center space-x-2 px-3 py-2 rounded-md font-semibold ${
@@ -32,7 +33,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ children }) => {
 
   return (
     <>
-      {/* Оверлей */}
       <div
         className={`fixed inset-0 bg-black bg-opacity-30 z-40 transition-opacity duration-300 ${
           isSidebarOpen ? "opacity-100" : "opacity-0 pointer-events-none"
@@ -40,7 +40,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ children }) => {
         onClick={toggleSidebar}
       ></div>
 
-      {/* Сайдбар */}
       <div
         className={`fixed top-0 left-0 h-screen w-64 bg-colorPrimary text-white z-50 transform transition-transform duration-300 ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
@@ -48,13 +47,19 @@ export const Sidebar: React.FC<SidebarProps> = ({ children }) => {
       >
         <div className="p-4 h-full flex flex-col">
           <div className="flex items-center mb-6 w-full justify-center">
-            <IconLogo color="#ffffff" />
+            <Link href="/home">
+              <IconLogo color="#ffffff" />
+            </Link>
           </div>
 
           <nav className="flex flex-col space-y-2 mb-8">
-            <Link href="/" className={linkClasses("/home")}>
+            <Link href="/home" className={linkClasses("/home")}>
               <IconHome color={iconColor("/home")} />
               <span>Home</span>
+            </Link>
+            <Link href="/calendar" className={linkClasses("/calendar")}>
+              <IconCalender color={iconColor("/calendar")} />
+              <span>My calendar</span>
             </Link>
             <Link href="/meetings" className={linkClasses("/meetings")}>
               <IconCalender color={iconColor("/meetings")} />
@@ -66,7 +71,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ children }) => {
             </Link>
           </nav>
 
-          <button className="w-full border border-white text-white rounded-md px-3 py-2 mb-2 hover:bg-colorPrimary">
+          <button
+            onClick={() => {
+              toggleScheduleModal();
+              toggleSidebar();
+            }}
+            className="w-full border border-white text-white rounded-md px-3 py-2 mb-2 hover:bg-colorPrimary"
+          >
             + Meeting
           </button>
         </div>
