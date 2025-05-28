@@ -47,8 +47,7 @@ export const useAuth = () => {
       }
 
       const authData = res as unknown as AuthResponse;
-      
-      localStorage.setItem("token", authData.accessToken);
+      localStorage.setItem("accessToken", authData.accessToken);
       localStorage.setItem("userId", authData.userId);
 
       const user: User = await fetchUserByIdApi(authData.userId);
@@ -70,7 +69,7 @@ export const useAuth = () => {
   };
 
   const handleLogout = useCallback(() => {
-    localStorage.removeItem("token");
+    localStorage.removeItem("accessToken");
     localStorage.removeItem("userId");
     localStorage.removeItem("username");
     localStorage.removeItem("email");
@@ -80,7 +79,7 @@ export const useAuth = () => {
 
   const checkAuth = useCallback(async (): Promise<boolean> => {
     const id = typeof window !== "undefined" ? localStorage.getItem("userId") : null;
-    const t = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    const t = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
     if (!t || !id) {
       router.push("/");
       return false;

@@ -1,13 +1,14 @@
 import { MeetingData } from "@/app/types/meeting-data";
-import axios from "axios";
+import { api } from "./authApi";
+import { Meeting } from "@/app/store/use-meetings-store";
 
-export const getMeetingsByUserId = async (userId: string, token: string) => {
+export const getMeetingsByUserId = async (userId: string, accessToken: string) => {
   try {
-    const res = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/meetings/user/${userId}`,
+    const res = await api.get(
+      `/meetings/user/${userId}`,
       {
         headers: {
-          "x-access-token": token,
+          "x-access-token": accessToken,
         },
       }
     );
@@ -18,13 +19,13 @@ export const getMeetingsByUserId = async (userId: string, token: string) => {
   }
 };
 
-export const getAttendingMeetings = async (userId: string, token: string) => {
+export const getAttendingMeetings = async (userId: string, accessToken: string) => {
   try {
-    const res = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/meetings/user/attending/${userId}`,
+    const res = await api.get(
+      `/meetings/user/attending/${userId}`,
       {
         headers: {
-          "x-access-token": token,
+          "x-access-token": accessToken,
         },
       }
     );
@@ -44,7 +45,7 @@ export const createMeeting = async (
 ) => {
   try {
   
-    const res = await axios.post(
+    const res = await api.post(
       process.env.NEXT_PUBLIC_API_URL + "/meetings/create",
       {
         title: meetingData.title,
@@ -79,8 +80,8 @@ export const createMeeting = async (
 
 export const getAllUserMeetings = async (userId: string, token: string) => {
   try {
-    const res = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/meetings/user/all/${userId}`,
+    const res = await api.get(
+      `/meetings/user/${userId}`,
       {
         headers: {
           "x-access-token": token,
@@ -96,18 +97,38 @@ export const getAllUserMeetings = async (userId: string, token: string) => {
 
 export const editMeeting = async (
   meetingId: string,
-  token: string,
-  startTime: Date
+  accessToken: string,
+  updatedData: Partial<Meeting>
 ) => {
   try {
-    const res = await axios.put(
-      `${process.env.NEXT_PUBLIC_API_URL}/meetings/edit/${meetingId}`,
-      {
-        startTime: startTime.toISOString(),
-      },
+    const res = await api.put(
+      `/meetings/edit/${meetingId}`,
+      updatedData,
       {
         headers: {
-          "x-access-token": token,
+          "x-access-token": accessToken,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return res.data;
+  } catch (error) {
+    console.error("Error editing meeting:", error);
+    throw error;
+  }
+};
+
+export const deleteMeeting = async (
+  meetingId: string,
+  accessToken: string,
+) => {
+  try {
+    const res = await api.delete(
+      `/meetings/delete/${meetingId}`,
+      {
+        headers: {
+          "x-access-token": accessToken,
           "Content-Type": "application/json",
         },
       }

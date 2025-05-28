@@ -7,6 +7,7 @@ export interface Meeting {
   description: string;
   endTime: string;
   organizer: string;
+  organizerName: string;
   participants: string[];
   startTime: string;
   duration: number;
@@ -15,9 +16,11 @@ export interface Meeting {
     votes: number;
   }[];
   title: string;
+  link: string;
   color?: string;
   teamName?: string;
   deadline?: string;
+  newStartTime?: string;
   votingOptions?: { option: string; votes: number }[];
 }
 
@@ -27,10 +30,7 @@ interface MeetingsState {
   selectedMeetingId: string | null;
   editingMeetingId: string | null;
   addMeeting: (meeting: Meeting) => void;
-  deleteMeeting: (id: string) => void;
-  editMeeting: (meeting: Meeting) => void;
   setSelectedMeetingId: (id: string | null) => void;
-  setEditingMeeting: (id: string | null) => void;
   voted: boolean;
   setVoted: (voted: boolean) => void;
 }
@@ -46,16 +46,16 @@ export const useMeetingsStore = create<MeetingsState>((set) => ({
   setMeetings: (meetings: Meeting[]) => set({ meetings }),
   addMeeting: (meeting) =>
     set((state) => ({ meetings: [...state.meetings, meeting] })),
-  deleteMeeting: (id) =>
+  deleteMeeting: (id: string) =>
     set((state) => ({
       meetings: state.meetings.filter((meeting) => meeting.id !== id),
     })),
-  editMeeting: (meeting) =>
+  editMeeting: (meeting: Meeting) =>
     set((state) => ({
       meetings: state.meetings.map((m) => (m.id === meeting.id ? meeting : m)),
     })),
   setSelectedMeetingId: (id) => set({ selectedMeetingId: id }),
-  setEditingMeeting: (id) => set(() => ({ editingMeetingId: id })),
+  setEditingMeeting: (id: string) => set(() => ({ editingMeetingId: id })),
   voted: false,
   setVoted: (voted) => set({ voted }),
 }));

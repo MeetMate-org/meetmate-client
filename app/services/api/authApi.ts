@@ -10,6 +10,8 @@ import {
 } from "../../types/auth";
 
 const base = process.env.NEXT_PUBLIC_API_URL;
+export const api = axios.create({ baseURL: base });
+
 if (!base) {
   throw new Error("API URL is not defined! Check your .env.local file.");
 }
@@ -19,7 +21,7 @@ export const loginApi = (credentials: {
   identifier: string;
   password: string;
 }): Promise<LoginResponse> =>
-  axios.post<LoginResponse>(`${base}/user/login`, credentials).then(r => r.data);
+  api.post<LoginResponse>(`/user/login`, credentials).then(r => r.data);
 
 /** POST /user/signup */
 export const signupApi = (userData: {
@@ -27,18 +29,18 @@ export const signupApi = (userData: {
   email: string;
   password: string;
 }): Promise<AuthResponse> =>
-  axios.post<AuthResponse>(`${base}/user/signup`, userData).then(r => r.data);
+  api.post<AuthResponse>(`/user/signup`, userData).then(r => r.data);
 
 /** GET /user/:id */
 export const fetchUserByIdApi = (id: string): Promise<User> =>
-  axios
-    .get<User>(`${base}/user/${id}`)
+  api
+    .get<User>(`/user/${id}`)
     .then(r => r.data);
 
 /** GET /user/account/ */
 export const fetchUserAccountApi = (token: string, userId: string): Promise<UserProfile> =>
-  axios
-    .get<UserProfile>(`${base}/user/account/${userId}`, {
+  api
+    .get<UserProfile>(`/user/account/${userId}`, {
       headers: { "x-access-token": token },
     })
     .then(r => r.data);
@@ -49,9 +51,9 @@ export const editUserApi = (
   userId: string,
   userData: Partial<UserProfile>
 ): Promise<{ success: boolean; message: string }> =>
-  axios
+  api
     .put<{ success: boolean; message: string }>(
-      `${base}/user/edit/${userId}`,
+      `/user/edit/${userId}`,
       userData,
       { headers: { "x-access-token": token } }
     )
@@ -63,8 +65,8 @@ export const verifyOtpApi = (data: {
   otpToken: string;
   emailOnly?: boolean;
 }): Promise<OtpVerifyResponse> =>
-  axios
-    .post<OtpVerifyResponse>(`${base}/user/verify-otp`, data)
+  api
+    .post<OtpVerifyResponse>(`/user/verify-otp`, data)
     .then(r => r.data);
 
 /** POST /user/resend-otp/:userId */
@@ -72,17 +74,17 @@ export const resendOtpApi = (
   userId: string,
   data: { email: string }
 ): Promise<{ success: boolean; message: string }> =>
-  axios
+  api
     .post<{ success: boolean; message: string }>(
-      `${base}/user/resend-otp/${userId}`,
+      `/user/resend-otp/${userId}`,
       data
     )
     .then(r => r.data);
 
 /** GET /user/profile */
 export const getUserProfileApi = (token: string): Promise<User> =>
-  axios
-    .get<User>(`${base}/user/profile`, {
+  api
+    .get<User>(`/user/profile`, {
       headers: { "x-access-token": token },
     })
     .then(r => r.data);
@@ -94,7 +96,7 @@ export const getUserProfileApi = (token: string): Promise<User> =>
 //   profileData: Partial<User>
 // ): Promise<UpdateProfileResponse> =>
 //   axios
-//     .put<UpdateProfileResponse>(`${base}/user/profile`, profileData, {
+//     .put<UpdateProfileResponse>(`/user/profile`, profileData, {
 //       headers: { "x-access-token": token },
 //     })
 //     .then(r => r.data);
@@ -105,9 +107,9 @@ export const changePasswordApi = (
   currentPassword: string,
   newPassword: string
 ): Promise<{ success: boolean; message: string }> =>
-  axios
+  api
     .post<{ success: boolean; message: string }>(
-      `${base}/user/change-password`,
+      `/user/change-password`,
       { currentPassword, newPassword },
       { headers: { "x-access-token": token } }
     )
@@ -117,13 +119,90 @@ export const changePasswordApi = (
 export const requestPasswordResetApi = (data: {
   email: string;
 }): Promise<{ success: boolean; message: string }> =>
-  axios
+  api
     .post<{ success: boolean; message: string }>(
-      `${base}/user/request-password-reset`,
+      `/user/request-password-reset`,
       data
     )
     .then(r => r.data);
 
 /** POST /user/reset-password */
 export const resetPasswordApi = (newPassword: string): Promise<ResetPasswordResponse> =>
-  axios.post<ResetPasswordResponse>(`${base}/user/reset-password`, { newPassword }).then(r => r.data);
+  api.post<ResetPasswordResponse>(`/user/reset-password`, { newPassword }).then(r => r.data);
+
+
+/* ---- REFRESH TOKEN ---- */
+
+api.interceptors.request.use(config => {
+  try {
+    const token = localStorage.getItem("accessToken");
+    
+    if (token && config.headers) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+  } catch (error) {
+    console.error("Failed to retrieve access token:", error);
+  }
+  return config;
+});
+
+let isRefreshing = false;
+let refreshSubscribers: ((token: string) => void)[] = [];
+
+const subscribeTokenRefresh = (cb: (token: string) => void) => {
+  refreshSubscribers.push(cb);
+};
+
+const onRefreshed = (token: string) => {
+  refreshSubscribers.map(cb => cb(token));
+  refreshSubscribers = [];
+};
+
+api.interceptors.response.use(
+  response => response,
+  async error => {
+    const originalRequest = error.config;
+
+    if (error.response?.status === 401 && !originalRequest.retry) {
+      if (isRefreshing) {
+        return new Promise(resolve => {
+          subscribeTokenRefresh(token => {
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+            resolve(api(originalRequest));
+          });
+        });
+      }
+
+      originalRequest.retry = true;
+      isRefreshing = true;
+
+      try {
+        const refreshToken = localStorage.getItem("refreshToken");
+        if (!refreshToken) {
+          throw new Error("Refresh token not found");
+        }
+
+        const response = await api.post("/user/refresh-tokens", {
+          refreshToken: refreshToken,
+        });
+        
+        const newAccessToken = response.data.accessToken;
+        localStorage.setItem("accessToken", newAccessToken);
+        
+        api.defaults.headers.common.Authorization = `Bearer ${newAccessToken}`;
+        onRefreshed(newAccessToken);
+        
+        return api(originalRequest);
+      } catch (e) {
+        console.error("Failed to refresh token:", e);
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        window.location.href = "/";
+        return Promise.reject(error);
+      } finally {
+        isRefreshing = false;
+      }
+    }
+    return Promise.reject(error);
+  }
+);

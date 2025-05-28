@@ -5,12 +5,12 @@ import { getAllUserMeetings, getAttendingMeetings, getMeetingsByUserId } from ".
 
 export const useFetchMeetings = () => {
   const id = typeof window !== "undefined" ? localStorage.getItem("userId") : null;
-  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  const accessToken = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
 
   const query = useQuery({
     queryKey: ["meetings"],
     queryFn: async () => {
-      if (!token) {
+      if (!accessToken) {
         throw new Error("Token is missing");
       }
 
@@ -18,9 +18,9 @@ export const useFetchMeetings = () => {
         throw new Error("User ID is missing");
       }
 
-      return getMeetingsByUserId(id, token);
+      return getMeetingsByUserId(id, accessToken);
     },
-    enabled: !!id && !!token, 
+    enabled: !!id && !!accessToken, 
   });
 
   return query;
@@ -28,12 +28,12 @@ export const useFetchMeetings = () => {
 
 export const useFetchAttenddingMeetings = () => {
   const id = typeof window !== "undefined" ? localStorage.getItem("userId") : null;
-  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  const accessToken = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
 
   const query = useQuery({
     queryKey: ["attendingMeetings"],
     queryFn: async () => {
-      if (!token) {
+      if (!accessToken) {
         throw new Error("Token is missing");
       }
 
@@ -41,9 +41,9 @@ export const useFetchAttenddingMeetings = () => {
         throw new Error("User ID is missing");
       }
 
-      return getAttendingMeetings(id, token);
+      return getAttendingMeetings(id, accessToken);
     },
-    enabled: !!id && !!token, 
+    enabled: !!id && !!accessToken, 
   });
 
   return query;
@@ -51,12 +51,12 @@ export const useFetchAttenddingMeetings = () => {
 
 export const useFetchAllUserMeetings = () => {
   const id = typeof window !== "undefined" ? localStorage.getItem("userId") : null;
-  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  const accessToken = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
 
   const query = useQuery({
     queryKey: ["allUserMeetings"],
     queryFn: async () => {
-      if (!token) {
+      if (!accessToken) {
         throw new Error("Token is missing");
       }
 
@@ -64,9 +64,9 @@ export const useFetchAllUserMeetings = () => {
         throw new Error("User ID is missing");
       }
 
-      return getAllUserMeetings(id, token);
+      return getAllUserMeetings(id, accessToken);
     },
-    enabled: !!id && !!token, 
+    enabled: !!id && !!accessToken, 
   });
 
   return query;
