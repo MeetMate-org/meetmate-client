@@ -7,6 +7,7 @@ import { IconClock } from "../svg/icon-clock";
 import { IconCalender } from "../svg/icon-calendar";
 import { IconUserMeeting } from "../svg/icon-user-meeting";
 import { useMeetingsStore } from '@/app/store/use-meetings-store';
+import { parse, format } from 'date-fns';
 
 export interface CalendarMeetingCardProps {
   meeting: Meeting;
@@ -24,7 +25,8 @@ function parseMeetingDateTime(dateTimeString: string | undefined) {
   }
 
   try {
-    const date = new Date(dateTimeString);
+    // Parse the date string using the expected format
+    const date = parse(dateTimeString, 'dd/MM/yyyy, HH:mm:ss', new Date());
 
     if (isNaN(date.getTime())) {
       console.error('Invalid date format:', dateTimeString);
@@ -36,10 +38,10 @@ function parseMeetingDateTime(dateTimeString: string | undefined) {
       };
     }
 
-    const timePart = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    const weekDay = date.toLocaleDateString([], { weekday: 'long' });
+    const timePart = format(date, 'hh:mm a');
+    const weekDay = format(date, 'EEEE');
     const dayNumber = date.getDate();
-    const fullDate = date.toLocaleDateString([], { year: 'numeric', month: 'long', day: 'numeric' });
+    const fullDate = format(date, 'MMMM d, yyyy');
 
     return {
       time: timePart,

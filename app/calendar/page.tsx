@@ -22,6 +22,8 @@ export default function CalendarRoute() {
 
   useEffect(() => {
     if (fetchedMeetings) {
+      console.log(fetchedMeetings);
+      
       setMeetings(fetchedMeetings);
     }
   }, [fetchedMeetings, setMeetings]);

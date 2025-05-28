@@ -27,7 +27,8 @@ export const MonthView: React.FC<MonthViewProps> = ({ meetings }) => {
   }
 
   for (let day = 1; day <= daysInMonth; day++) {
-    const dateStr = new Date(year, month, day).toISOString().split("T")[0];
+    const date = new Date(year, month, day);
+    const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
     const dayMeetings = meetings.filter((m) =>
       m.startTime.startsWith(dateStr)
     );

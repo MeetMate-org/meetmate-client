@@ -57,8 +57,15 @@ const calculateEndTime = (startTime: string, duration: number): string => {
   });
 };
 
+// Utility function to parse "DD/MM/YYYY, HH:mm:ss" into a valid ISO format
+const parseInvalidDateFormat = (dateString: string): string => {
+  const [datePart, timePart] = dateString.split(", ");
+  const [day, month, year] = datePart.split("/").map(Number);
+  return new Date(year, month - 1, day, ...timePart.split(":").map(Number)).toISOString();
+};
+
 export default function WeekCalendar() {
-  const { meetings, setMeetings } = useMeetingsStore();
+  const { meetings, setMeetings } = useMeetingsStore();  
   const [isClient, setIsClient] = useState(false);
   const [currentWeek, setCurrentWeek] = useState<{ start: Date; end: Date }>();
   const [days, setDays] = useState<{ label: string; date: string }[]>([]);
@@ -91,7 +98,7 @@ export default function WeekCalendar() {
 
   const handleDrop = async (meetingId: string, newDay: string, newHour: string) => {
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("accessToken");
       if (!token) throw new Error("Unauthorized");
 
       // Розділяємо час і модифікатор (AM/PM)
@@ -107,7 +114,7 @@ export default function WeekCalendar() {
       const newStartTime = new Date(year, month - 1, day, hours, minutes); // Локальний час
 
       // Викликаємо API для оновлення мітингу
-      await editMeeting(meetingId, token, newStartTime);
+      await editMeeting(meetingId, token, { startTime: newStartTime.toISOString() });
 
       // Оновлюємо стан мітингів
       setMeetings(

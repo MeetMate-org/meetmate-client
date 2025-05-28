@@ -1,5 +1,3 @@
-import React from "react";
-
 interface IconLinkProps {
   strokeColor?: string;
   strokeWidth?: number;
@@ -34,7 +32,6 @@ export const IconLink: React.FC<IconLinkProps> = ({
 };
 
 IconLink.displayName = "IconLink";
-"use client";
 
 import React from "react";
 

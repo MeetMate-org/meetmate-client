@@ -38,7 +38,7 @@ export const AuthModal: React.FC = () => {
 
 
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
+    const storedToken = localStorage.getItem("accessToken");
     const storedUserId = localStorage.getItem("userId");
     const firstVisit = localStorage.getItem("visited") !== "true";
 
@@ -234,7 +234,7 @@ export const AuthModal: React.FC = () => {
               {
                 onSuccess: (res) => {
                   if (res.accessToken) {
-                    localStorage.setItem("token", res.accessToken);
+                    localStorage.setItem("accessToken", res.accessToken);
                     handleClose();
                     router.push("/home");
                   } else {

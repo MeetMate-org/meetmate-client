@@ -2,37 +2,24 @@
 
 import React, { useRef } from "react";
 import { IconEdit } from "../svg/icon-edit";
-import { useCreateModalStore } from "@/app/store/use-modal-store";
-import ModalCreate from "./edit-meeting-modal";
+import { useModalStore } from "@/app/store/use-modal-store";
+import ModalCreate from "./create-meeting-modal";
 import { usePathname } from "next/navigation";
 import { useMeetingsStore, type Meeting } from "@/app/store/use-meetings-store";
 
-interface EditButtonWithModalProps {
-  meeting: Meeting;
-}
+const EditButtonWithModal = () => {
+  const buttonRef = useRef<HTMLButtonElement>(
+    null!
+  ) as React.RefObject<HTMLButtonElement>;
+  const { isModalOpen, toggleModal, setConfirmed } = useModalStore();
 
-const EditButtonWithModal: React.FC<EditButtonWithModalProps> = ({
-  meeting,
-}) => {
-  const buttonRef = useRef<HTMLButtonElement>(null);
-  const { isModalOpen, toggleModal, setConfirmed } = useCreateModalStore();
-  const { setSelectedMeetingId, resetSelectedMeetingId } = useMeetingsStore();
   const pathname = usePathname();
   const isHost = pathname === "/meetings/host";
+  const isAttend = pathname === "/meetings/attend";
 
   const handleEditClick = () => {
-    if (!meeting) {
-      console.error("Meeting is undefined!");
-      return;
-    }
-    setSelectedMeetingId(meeting.id);
     setConfirmed(false);
     toggleModal();
-  };
-
-  const handleCloseModal = () => {
-    toggleModal();
-    resetSelectedMeetingId();
   };
 
   return (
@@ -44,11 +31,8 @@ const EditButtonWithModal: React.FC<EditButtonWithModalProps> = ({
       >
         <IconEdit />
       </button>
-      {isModalOpen && (
-        <ModalCreate
-          buttonRef={buttonRef as React.RefObject<HTMLButtonElement>}
-        />
-      )}
+
+      {isModalOpen && <ModalCreate buttonRef={buttonRef} />}
     </div>
   );
 };

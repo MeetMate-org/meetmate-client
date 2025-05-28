@@ -2,6 +2,10 @@ import { MeetingData } from "@/app/types/meeting-data";
 import { api } from "./authApi";
 import { Meeting } from "@/app/store/use-meetings-store";
 
+const formatToISOWithOffset = (date: Date): string => {
+  return date.toISOString().replace('Z', '+00:00');
+};
+
 export const getMeetingsByUserId = async (userId: string, accessToken: string) => {
   try {
     const res = await api.get(
@@ -50,12 +54,11 @@ export const createMeeting = async (
       {
         title: meetingData.title,
         description: meetingData.description,
-        attendees: meetingData.attendees,
-        startTime: meetingData.selectedTime,
+        startTime: formatToISOWithOffset(new Date(meetingData.selectedTime)),
         duration: meetingData.duration,
         times: [
           {
-            value: meetingData.selectedTime,
+            value: new Date(meetingData.selectedTime).toISOString(),
             votes: 0,
           },
         ],
@@ -81,13 +84,15 @@ export const createMeeting = async (
 export const getAllUserMeetings = async (userId: string, token: string) => {
   try {
     const res = await api.get(
-      `/meetings/user/${userId}`,
+      `/meetings/user/all/${userId}`,
       {
         headers: {
           "x-access-token": token,
         },
       }
     );
+    console.log(res.data);
+    
     return res.data;
   } catch (error) {
     console.error("Error fetching all user meetings:", error);

@@ -13,7 +13,7 @@ const Confirmination = ({ meetingData, setMeetingData }: {
   const mutation = useMutation({
     mutationFn: (meetingData: MeetingData) => {
       const id = typeof window !== "undefined" ? localStorage.getItem("userId") : null;
-      const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+      const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
       const userName = typeof window !== "undefined" ? localStorage.getItem("username") : "";
       
       if (!token) {

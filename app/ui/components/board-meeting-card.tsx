@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import React, { useState } from "react";
 import { useMeetingsStore, type Meeting } from "@/app/store/use-meetings-store";
 import { IconEdit } from "../svg/icon-edit";
@@ -8,9 +7,6 @@ import { IconClock } from "../svg/icon-clock";
 import { IconCalender } from "../svg/icon-calendar";
 import { IconUserMeeting } from "../svg/icon-user-meeting";
 import { IconDelete } from "../svg/icon-delete";
-import { IconTeam } from "../svg/icon-team";
-import EditButtonWithModal from "../components/EditButtonWithModal";
-import { useMeetingDetailsModalStore } from "@/app/store/use-meetingDetails-store";
 
 import {
   useDeleteMeeting,
@@ -29,8 +25,6 @@ export const BoardMeetingCard: React.FC<BoardMeetingCardProps> = ({
 }) => {
   const { deleteMeeting, setSelectedMeetingId } = useMeetingsStore();
   const [showConfirmModal, setShowConfirmModal] = React.useState(false);
-  const { isModalOpen, toggleModal, setMeetId } = useMeetingDetailsModalStore();
-  const { setSelectedMeetingId } = useMeetingsStore();
   const { mutate: deleteMeetingMutate, isPending } = useDeleteMeeting();
   const { mutate: editMeetingMutate } = useEditMeeting();
 
@@ -42,19 +36,7 @@ export const BoardMeetingCard: React.FC<BoardMeetingCardProps> = ({
   }
 
   const handleEdit = () => {
-    console.log(meeting.id);
-    setMeetId(meeting.id);
-    toggleModal();
-  };
-
-  const handleDeleteClick = () => {
-    setShowConfirmModal(true);
-  };
-
-  const handleDelete = () => {
-    deleteMeeting(meeting.id);
-    setShowConfirmModal(false);
-    setSelectedMeetingId(meeting._id);
+    setSelectedMeetingId(meeting.id);
     setIsEditModalOpen(true);
   };
 
@@ -95,12 +77,8 @@ export const BoardMeetingCard: React.FC<BoardMeetingCardProps> = ({
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <h3 className="text-lg font-semibold text-gray-900">
-              {meeting.name}
               {meeting.title}
             </h3>
-            <div className="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center text-sm text-gray-600">
-              M
-            </div>
             <span className="text-gray-600 text-sm">              
               {meeting.organizerName}
             </span>
@@ -120,14 +98,20 @@ export const BoardMeetingCard: React.FC<BoardMeetingCardProps> = ({
           <div className="flex items-center gap-2 text-gray-600 text-sm">
             <IconClock color="#6B7280" />
             <span>
-              {meeting.startTime && meeting.endTime
+              {meeting.startTime 
                 ? `${new Date(meeting.startTime).toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
-                  })} - ${new Date(meeting.endTime).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}`
+                  })} - ${
+                    // meeting starttime + duration
+                    new Date(
+                      new Date(meeting.startTime).getTime() +
+                      meeting.duration * 60000
+                    ).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })
+                  }`
                 : "No time set"}
             </span>
           </div>
@@ -142,14 +126,6 @@ export const BoardMeetingCard: React.FC<BoardMeetingCardProps> = ({
         </div>
 
         <div className="flex justify-end gap-2 mt-4">
-          <div
-            onClick={handleEdit}
-            className="p-1.5 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
-          >
-            <EditButtonWithModal meeting={meeting} />
-          </div>
-          <button
-            onClick={handleDeleteClick}
           <button
             onClick={handleEdit}
             className="p-1.5 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
@@ -184,7 +160,7 @@ export const BoardMeetingCard: React.FC<BoardMeetingCardProps> = ({
             </h2>
             <p className="text-sm text-gray-600 mb-6">
               Are you sure you want to delete the meeting{" "}
-              <span className="font-semibold">"{meeting.name}"</span>?
+              <span className="font-semibold">"{meeting.title}"</span>?
             </p>
             <div className="flex justify-end gap-3">
               <button

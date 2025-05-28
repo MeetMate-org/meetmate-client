@@ -7,7 +7,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
 const EditProfile = () => {
-  const token = localStorage.getItem("token") || "";
+  const token = localStorage.getItem("accessToken") || "";
   const userId = localStorage.getItem("userId") || "";
 
   const [username, setUsername] = useState("");
