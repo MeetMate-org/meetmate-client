@@ -51,6 +51,7 @@ export default function BoardRoute() {
               <BoardMeetingCard
                 key={key}
                 meeting={meeting}
+                isAttender={true}
               />
             ))
           )}

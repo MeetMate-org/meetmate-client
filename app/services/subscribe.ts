@@ -16,7 +16,7 @@ export const subscribe = async (subscriber: ISubscribe) => {
     duration: number;
   }, organizer: string}) => {
       toast(
-        `${data.message.title} scheduled by ${subscriber.username} at ${new Date(data.message.startTime).toLocaleTimeString()} for ${data.message.duration} minutes`,
+        `${data.message.title} scheduled by ${data.organizer} at ${new Date(data.message.startTime).toLocaleTimeString()} for ${data.message.duration} minutes`,
       );
     
     subscriber.setNotifications((prev: INotification[]) => {

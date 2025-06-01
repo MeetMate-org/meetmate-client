@@ -18,10 +18,12 @@ import { LinkChainIcon } from "../svg/icon-link";
 
 interface BoardMeetingCardProps {
   meeting: Meeting;
+  isAttender?: boolean
 }
 
 export const BoardMeetingCard: React.FC<BoardMeetingCardProps> = ({
   meeting,
+  isAttender
 }) => {
   const { deleteMeeting, setSelectedMeetingId } = useMeetingsStore();
   const [showConfirmModal, setShowConfirmModal] = React.useState(false);
@@ -125,7 +127,7 @@ export const BoardMeetingCard: React.FC<BoardMeetingCardProps> = ({
           </div>
         </div>
 
-        <div className="flex justify-end gap-2 mt-4">
+        {!isAttender && <div className="flex justify-end gap-2 mt-4">
           <button
             onClick={handleEdit}
             className="p-1.5 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
@@ -139,7 +141,7 @@ export const BoardMeetingCard: React.FC<BoardMeetingCardProps> = ({
           >
             <IconDelete />
           </button>
-        </div>
+        </div>}
 
         {isEditModalOpen && (
           <EditMeetingModal

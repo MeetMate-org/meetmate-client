@@ -7,62 +7,43 @@ import { IconClock } from "../svg/icon-clock";
 import { IconCalender } from "../svg/icon-calendar";
 import { IconUserMeeting } from "../svg/icon-user-meeting";
 import { useMeetingsStore } from '@/app/store/use-meetings-store';
-import { parse, format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 
 export interface CalendarMeetingCardProps {
   meeting: Meeting;
 }
 
-function parseMeetingDateTime(dateTimeString: string | undefined) {
-  if (!dateTimeString) {
-    console.error('Invalid dateTimeString:', dateTimeString);
-    return {
-      time: 'Unknown',
-      day: 'Unknown',
-      dayNumber: 0,
-      fullDate: 'Unknown'
-    };
-  }
-
+function parseMeetingDateTime(isoString: string, duration: number) {
   try {
-    // Parse the date string using the expected format
-    const date = parse(dateTimeString, 'dd/MM/yyyy, HH:mm:ss', new Date());
-
+    const date = parseISO(isoString);
+    
     if (isNaN(date.getTime())) {
-      console.error('Invalid date format:', dateTimeString);
-      return {
-        time: dateTimeString,
-        day: 'Unknown',
-        dayNumber: 0,
-        fullDate: dateTimeString
-      };
+      throw new Error('Invalid date');
     }
 
-    const timePart = format(date, 'hh:mm a');
-    const weekDay = format(date, 'EEEE');
-    const dayNumber = date.getDate();
-    const fullDate = format(date, 'MMMM d, yyyy');
-
     return {
-      time: timePart,
-      day: weekDay,
-      dayNumber,
-      fullDate
+      time: format(date, 'hh:mm a'),
+      day: format(date, 'EEEE'),
+      dayNumber: date.getDate(),
+      fullDate: format(date, 'MMMM d, yyyy'),
+      startTime: date,
+      endTime: new Date(date.getTime() + (duration || 0) * 60000)
     };
   } catch (error) {
     console.error('Error parsing date:', error);
     return {
-      time: 'Unknown',
-      day: 'Unknown',
+      time: 'Invalid time',
+      day: 'Invalid day',
       dayNumber: 0,
-      fullDate: 'Unknown'
+      fullDate: 'Invalid date',
+      startTime: new Date(),
+      endTime: new Date()
     };
   }
 }
 
 export const CalendarMeetingCard: React.FC<CalendarMeetingCardProps> = ({ meeting }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-
   const setEditingMeeting = useMeetingsStore((state) => state.setEditingMeeting);
 
   const handleEdit = (e: MouseEvent<HTMLButtonElement>) => {
@@ -74,7 +55,7 @@ export const CalendarMeetingCard: React.FC<CalendarMeetingCardProps> = ({ meetin
     setIsExpanded(!isExpanded);
   };
 
-  const { time, day, fullDate, dayNumber } = parseMeetingDateTime(new Date(meeting.startTime).toLocaleString());
+  const { time, day, fullDate, dayNumber, startTime, endTime } = parseMeetingDateTime(meeting.startTime, meeting.duration);
 
   return (
     <div className="mb-6">
@@ -105,9 +86,7 @@ export const CalendarMeetingCard: React.FC<CalendarMeetingCardProps> = ({ meetin
               <div className="flex items-center gap-2">
                 <IconClock color="black" />
                 <span className="opacity-90">
-                  {meeting.startTime && meeting.endTime
-                    ? `${new Date(meeting.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(meeting.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
-                    : "No time set"}
+                  {format(startTime, 'hh:mm a')} - {format(endTime, 'hh:mm a')}
                 </span>
               </div>
               <div className="flex items-center gap-2">
@@ -116,7 +95,7 @@ export const CalendarMeetingCard: React.FC<CalendarMeetingCardProps> = ({ meetin
               </div>
               <div className="flex items-center gap-2">
                 <IconUserMeeting color="black" />
-                <span className="opacity-90">{meeting.participants.length} attendees</span>
+                <span className="opacity-90">{meeting.participants?.length || 0} attendees</span>
               </div>
             </div>
           )}
@@ -125,4 +104,3 @@ export const CalendarMeetingCard: React.FC<CalendarMeetingCardProps> = ({ meetin
     </div>
   );
 };
-
