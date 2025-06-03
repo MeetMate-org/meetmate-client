@@ -33,7 +33,8 @@ interface CalendarEvent {
 
 const calculateEndTime = (startTime: string, duration: number): string => {
   const [time, modifier] = startTime.split(" ");
-  let [hours, minutes] = time.split(":").map(Number);
+  const [rawHours, minutes] = time.split(":").map(Number);
+  let hours = rawHours;
 
   if (modifier === "PM" && hours !== 12) hours += 12;
   if (modifier === "AM" && hours === 12) hours = 0;

@@ -29,30 +29,6 @@ export default function HomePage() {
 
   if (!user) return null;
 
-  // dummy data
-  const dummyEvents = [
-    { id: "1", title: "React Meetup", date: "2025-05-02" },
-    { id: "2", title: "Online Conference", date: "2025-05-05" },
-  ];
-  const dummyActions = [
-    { label: "New Meeting", onClick: () => {} },
-    { label: "Create Group", onClick: () => {} },
-    { label: "Contacts", onClick: () => {} },
-  ];
-  const dummyStats = { meetings: 12, contacts: 34 };
-  const dummyNotifications = [
-    { id: "1", message: "You have a group invitation", unread: true },
-    { id: "2", message: "New message from Olena", unread: false },
-  ];
-  const dummyRecommendations = [
-    { id: "1", name: "React Developers" },
-    { id: "2", name: "Expert Roundtable" },
-  ];
-  const dummyActivity = [
-    { id: "1", description: "Created group 'Frontend UA'" },
-    { id: "2", description: "Updated profile" },
-  ];
-
   return (
     <div className="flex h-screen bg-gray-50">
       <div className="flex flex-col overflow-hidden">

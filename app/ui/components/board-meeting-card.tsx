@@ -161,8 +161,8 @@ export const BoardMeetingCard: React.FC<BoardMeetingCardProps> = ({
               Delete Meeting
             </h2>
             <p className="text-sm text-gray-600 mb-6">
-              Are you sure you want to delete the meeting{" "}
-              <span className="font-semibold">"{meeting.title}"</span>?
+              Are you sure you want to delete the meeting{' '}
+              <span className="font-semibold">&quot;{meeting.title}&quot;</span>?
             </p>
             <div className="flex justify-end gap-3">
               <button
