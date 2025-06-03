@@ -39,7 +39,7 @@ const mapDaysToDates = (optimalTimeData: Record<string, TimeSlot[]>, startDate: 
       // Беремо всі години з доступних слотів
       result[dateKey] = optimalTimeData[dayOfWeek].flatMap(slot => {
         const hours = [];
-        let currentHour = new Date(`1970-01-01T${slot.start}:00`);
+        const currentHour = new Date(`1970-01-01T${slot.start}:00`);
         const endHour = new Date(`1970-01-01T${slot.end}:00`);
         
         while (currentHour <= endHour) {

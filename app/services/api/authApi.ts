@@ -9,7 +9,6 @@ import {
   Slot,
   // UpdateProfileResponse,
 } from "../../types/auth";
-import { headers } from "next/headers";
 
 const base = process.env.NEXT_PUBLIC_API_URL;
 export const api = axios.create({ baseURL: base });

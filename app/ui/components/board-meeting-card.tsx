@@ -25,7 +25,7 @@ export const BoardMeetingCard: React.FC<BoardMeetingCardProps> = ({
   meeting,
   isAttender
 }) => {
-  const { deleteMeeting, setSelectedMeetingId } = useMeetingsStore();
+  const { setSelectedMeetingId } = useMeetingsStore();
   const [showConfirmModal, setShowConfirmModal] = React.useState(false);
   const { mutate: deleteMeetingMutate, isPending } = useDeleteMeeting();
   const { mutate: editMeetingMutate } = useEditMeeting();

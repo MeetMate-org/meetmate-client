@@ -57,13 +57,6 @@ const calculateEndTime = (startTime: string, duration: number): string => {
   });
 };
 
-// Utility function to parse "DD/MM/YYYY, HH:mm:ss" into a valid ISO format
-const parseInvalidDateFormat = (dateString: string): string => {
-  const [datePart, timePart] = dateString.split(", ");
-  const [day, month, year] = datePart.split("/").map(Number);
-  return new Date(year, month - 1, day, ...timePart.split(":").map(Number)).toISOString();
-};
-
 export default function WeekCalendar() {
   const { meetings, setMeetings } = useMeetingsStore();  
   const [isClient, setIsClient] = useState(false);
@@ -100,22 +93,23 @@ export default function WeekCalendar() {
     try {
       const token = localStorage.getItem("accessToken");
       if (!token) throw new Error("Unauthorized");
-
+  
       // Розділяємо час і модифікатор (AM/PM)
       const [time, modifier] = newHour.split(" ");
-      let [hours, minutes] = time.split(":").map(Number);
-
+      const [hours, minutes] = time.split(":").map(Number); // Changed to const
+  
       // Конвертуємо час у 24-годинний формат
-      if (modifier === "PM" && hours !== 12) hours += 12;
-      if (modifier === "AM" && hours === 12) hours = 0;
-
+      let adjustedHours = hours;
+      if (modifier === "PM" && hours !== 12) adjustedHours += 12;
+      if (modifier === "AM" && hours === 12) adjustedHours = 0;
+  
       // Створюємо дату у локальному часовому поясі
       const [year, month, day] = newDay.split("-").map(Number);
-      const newStartTime = new Date(year, month - 1, day, hours, minutes); // Локальний час
-
+      const newStartTime = new Date(year, month - 1, day, adjustedHours, minutes); // Локальний час
+  
       // Викликаємо API для оновлення мітингу
       await editMeeting(meetingId, token, { startTime: newStartTime.toISOString() });
-
+  
       // Оновлюємо стан мітингів
       setMeetings(
         meetings.map((meeting: Meeting) =>
@@ -245,16 +239,6 @@ export default function WeekCalendar() {
       minute: "2-digit",
       hour12: true,
     });
-    const endTime = (() => {
-      const endDate = new Date(startDate);
-      endDate.setMinutes(endDate.getMinutes() + meeting.duration);
-      return endDate.toLocaleTimeString("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: true,
-      });
-    }
-    )();
 
     const day = startDate.toISOString().split("T")[0]; // Дата у форматі YYYY-MM-DD
 

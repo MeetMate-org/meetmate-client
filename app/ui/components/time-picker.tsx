@@ -33,7 +33,6 @@ export const WeeklyHoursPicker: React.FC = () => {
   };
 
   // Ініціалізація станів
-  const [initialData, setInitialData] = useState<FreeTime>(defaultData);
   const initialHours = useRef<FreeTime>(defaultData);
   const [hours, setHours] = useState<FreeTime>(defaultData);
   const [hasChanges, setHasChanges] = useState(false);
@@ -47,19 +46,18 @@ export const WeeklyHoursPicker: React.FC = () => {
       for (const day of days) {
         if (user.freeTime[day.key]) {
           normalizedData[day.key] = user.freeTime[day.key]
-            .filter((intv: any) => intv.start && intv.end)
-            .map((intv: any) => ({ 
+            .filter((intv: {start: string; end: string}) => intv.start && intv.end)
+            .map((intv: {start: string; end: string}) => ({ 
               start: intv.start || "", 
               end: intv.end || "" 
             }));
         }
       }
 
-      setInitialData(normalizedData);
       initialHours.current = normalizedData;
       setHours(normalizedData);
     }
-  }, [user?.freeTime]);
+  }, [user?.freeTime, defaultData]);
 
   // Перевірка змін
   useEffect(() => {
@@ -130,7 +128,6 @@ export const WeeklyHoursPicker: React.FC = () => {
       });
       
       initialHours.current = filteredHours;
-      setInitialData(filteredHours);
       setHasChanges(false);
       
     } catch (error) {

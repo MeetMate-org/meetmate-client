@@ -5,13 +5,6 @@ import { useRouter } from "next/navigation";
 import { useAuthStore } from "../store/use-auth-store";
 import Header from "../ui/components/header";
 import WelcomeBanner from "../ui/components/welcome-banner";
-import UpcomingEvents from "../ui/components/upcoming-events";
-import QuickActions from "../ui/components/quick-actions";
-import Statistics from "../ui/components/statisctics";
-import Notifications from "../ui/components/notifications";
-import Recommendations from "../ui/components/recommendations";
-import RecentActivity from "../ui/components/recent-activity";
-import Settings from "../ui/components/settings";
 import { WeeklyHoursPicker } from "../ui/components/time-picker";
 
 
