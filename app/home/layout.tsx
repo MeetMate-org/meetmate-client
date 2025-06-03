@@ -62,25 +62,12 @@ export default function HomePage() {
 
   return (
     <div className="flex h-screen bg-gray-50">
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex flex-col overflow-hidden">
         <Header/>
 
-        <main className="flex-1 overflow-auto p-4 sm:p-6 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 auto-rows-min">
+        <main className="flex flex-col justify-center items-center overflow-auto p-4 sm:p-6 gap-4 sm:gap-6 auto-rows-min">
           <WelcomeBanner
             username={user.username}
-            lastLogin="Today at 3:00 PM"
-            onProfileClick={() => router.push("/profile")}
-          />
-
-          <UpcomingEvents events={dummyEvents} />
-          <QuickActions actions={dummyActions} />
-          <Statistics stats={dummyStats} />
-          <Notifications notifications={dummyNotifications} />
-          <Recommendations items={dummyRecommendations} />
-          <RecentActivity activities={dummyActivity} />
-          <Settings
-            onToggleTheme={() => {/* toggle theme logic */}}
-            onChangeLanguage={() => {/* change language logic */}}
           />
 
           <div className="col-span-full md:col-start-2 md:col-span-3">

@@ -11,6 +11,7 @@ import {
   requestPasswordResetApi,
   resetPasswordApi,
   editUserApi,
+  setFreeTime,
 } from "./api/authApi";
 import {
   AuthResponse,
@@ -18,6 +19,7 @@ import {
   // User,
   OtpVerifyResponse,
   ResetPasswordResponse,
+  Slot,
   // UpdateProfileResponse,
 } from "../types/auth";
 import { fetchUserAccountApi } from "./api/authApi";
@@ -92,6 +94,12 @@ export const useRequestPasswordReset = () =>
     mutationFn: requestPasswordResetApi,
     onError: e => console.error("Request password reset error:", e),
   });
+
+  export const useSetFreeTime = () => 
+    useMutation<{ success: boolean; message: string }, Error, { slots: Slot; token: string }>({
+      mutationFn: ({ slots, token }) => setFreeTime(slots, token),
+      onError: e => console.error("Set free time error: ", e)
+    });
 
 export const useResetPassword = () =>
   useMutation<ResetPasswordResponse, Error, { newPassword: string }>({

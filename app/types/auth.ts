@@ -6,6 +6,9 @@ export interface User {
   username: string;
   role?: string;
   notifications?: INotification[];
+  freeTime?: {
+    [day: string]: { start: string; end: string }[];
+  }
 }
 
 export interface UserProfile {
@@ -54,3 +57,15 @@ export interface AuthState {
   isModalOpen: boolean;
   activeTab: 'dashboard' | 'board';
 } 
+
+export interface Slot {
+  freeTime: {
+    mon: { start: string; end: string }[];
+    tue: { start: string; end: string }[];
+    wed: { start: string; end: string }[];
+    thu: { start: string; end: string }[];
+    fri: { start: string; end: string }[];
+    sat: { start: string; end: string }[];
+    sun: { start: string; end: string }[];
+  };
+}
