@@ -30,11 +30,11 @@ export default function HomePage() {
   if (!user) return null;
 
   return (
-    <div className="flex h-screen bg-gray-50">
-      <div className="flex flex-col overflow-hidden">
+    <div className="w-full flex min-h-screen bg-gray-50">
+      <div className="w-full flex flex-col">
         <Header/>
 
-        <main className="flex flex-col justify-center items-center overflow-auto p-4 sm:p-6 gap-4 sm:gap-6 auto-rows-min">
+        <main className="w-full flex flex-col justify-center items-center overflow-auto p-4 sm:p-6 gap-4 sm:gap-6">
           <WelcomeBanner
             username={user.username}
           />

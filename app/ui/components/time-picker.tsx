@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { PlusIcon } from "../svg/icon-add";
 import { useGetUserById, useSetFreeTime } from "@/app/services/auth-services";
 
@@ -22,7 +22,7 @@ export const WeeklyHoursPicker: React.FC = () => {
   const setFreeTimeMutate = useSetFreeTime();
   const { data: user } = useGetUserById(localStorage.getItem("userId") || "");
 
-  const defaultData: FreeTime = {
+  const defaultData: FreeTime = useMemo(() => ({
     sun: [],
     mon: [],
     tue: [],
@@ -30,7 +30,7 @@ export const WeeklyHoursPicker: React.FC = () => {
     thu: [],
     fri: [],
     sat: [],
-  };
+  }), []);
 
   // Ініціалізація станів
   const initialHours = useRef<FreeTime>(defaultData);
@@ -141,7 +141,7 @@ export const WeeklyHoursPicker: React.FC = () => {
   };
 
   return (
-    <div className="col-span-full md:col-span-3 bg-white rounded-lg shadow p-4 sm:p-6">
+    <div className="w-full bg-white rounded-lg shadow p-4 sm:p-6">
       <h3 className="text-lg sm:text-xl font-semibold mb-4 text-center md:text-left">
         Weekly hours
       </h3>
